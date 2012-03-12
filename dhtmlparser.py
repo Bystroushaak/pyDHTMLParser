@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 pyDHTMLParser v1.5.0 (12.03.2012) by Bystroushaak (bystrousak@kitakitsune.org)
-This version corresponds with DHTMLParser v1.4.1.
+This version corresponds with DHTMLParser v1.5.0.
 
 This work is licensed under a Creative Commons 3.0 Unported License
 (http://creativecommons.org/licenses/by/3.0/cz/).
@@ -821,7 +821,7 @@ if __name__ == "__main__":
 	"Unit tests"
 	
 	dom = parseString("""
-		"<div id='xe' a='b'>obsah xe divu</div>
+		"<div Id='xe' a='b'>obsah xe divu</div> <!-- Id, not id :) -->
 		 <div id='xu' a='b'>obsah xu divu</div>
 	""")
 
@@ -833,7 +833,7 @@ if __name__ == "__main__":
 	assert divXu.tagToString() == """<div a="b" id="xu">"""
 	
 	# unit test for toString (must returns original string)
-	assert divXe.toString() == """<div id='xe' a='b'>obsah xe divu</div>"""
+	assert divXe.toString() == """<div Id='xe' a='b'>obsah xe divu</div>"""
 	assert divXu.toString() == """<div id='xu' a='b'>obsah xu divu</div>"""
 	
 	# getTagName() test
