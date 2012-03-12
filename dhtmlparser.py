@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.4.0 (03.03.2012) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.5.0 (12.03.2012) by Bystroushaak (bystrousak@kitakitsune.org)
 This version corresponds with DHTMLParser v1.4.1.
 
 This work is licensed under a Creative Commons 3.0 Unported License
@@ -97,6 +97,8 @@ class HTMLElement():
 			self.childs = closeElements(tag)
 		else:
 			raise Exception("Oh no, not this crap!")
+		
+		self.__tagname = self.__tagname.lower()
 
 
 	#===========================================================================
@@ -332,7 +334,7 @@ class HTMLElement():
 			elif next_state == 2: # one word parameter without quotes
 				if c.strip() == "":
 					next_state = 0
-					self.params[key] = value
+					self.params[key.lower()] = value
 					key = ""
 					value = ""
 				else:
@@ -340,7 +342,7 @@ class HTMLElement():
 			elif next_state == 3: # quoted string
 				if c == end_quote and (buff[0] != "\\" or (buff[0]) == "\\" and buff[1] == "\\"):
 					next_state = 0
-					self.params[key] = unescape(value, end_quote)
+					self.params[key.lower()] = unescape(value, end_quote)
 					key = ""
 					value = ""
 					end_quote = ""
@@ -352,9 +354,9 @@ class HTMLElement():
 			
 		if key != "":
 			if end_quote != "" and value.strip() != "":
-				self.params[key] = unescape(value, end_quote)
+				self.params[key.lower()] = unescape(value, end_quote)
 			else:
-				self.params[key] = value
+				self.params[key.lower()] = value
 	
 	#* /Parsers ****************************************************************
 
@@ -440,7 +442,7 @@ class HTMLElement():
 
 
 	def prettify(self, depth = 0, separator = "  ", last = True, pre = False, inline = False):
-		"Returns prettifyied tag with content. Same as toString()."
+		"Returns prettifyied tag with content."
 		output = ""
 		
 		if self.getTagName() != "" and self.tagToString().strip() == "":
