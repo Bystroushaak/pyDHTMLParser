@@ -273,7 +273,7 @@ class HTMLElement():
 			"hr",
 			"img",
 			"input",
-			"link",
+			#"link",
 			"meta",
 			"spacer",
 			"frame",
@@ -718,7 +718,7 @@ def __repair_tags(raw_input):
 		el = raw_input[index]
 		
 		if el.isComment():
-			if index > 0 and index < len(raw_input):
+			if index > 0 and index < len(raw_input) - 1:
 				if raw_input[index - 1].tagToString().startswith("<") and raw_input[index + 1].tagToString().endswith(">"):
 					ostack[-1] = HTMLElement(ostack[-1].tagToString() + raw_input[index + 1].tagToString())
 					ostack.append(el)
