@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.5.0 (12.03.2012) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.5.1 (12.03.2012) by Bystroushaak (bystrousak@kitakitsune.org)
 This version corresponds with DHTMLParser v1.5.0.
 
 This work is licensed under a Creative Commons 3.0 Unported License
@@ -12,24 +12,22 @@ Project page; https://github.com/Bystroushaak/pyDHTMLParser
 Created in Geany & gedit text editor.
 """
 
-def unescape(input, quote = '"'):
-	if len(input) < 2:
-		return input
+def unescape(inp, quote = '"'):
+	if len(inp) < 2:
+		return inp
 
 	output = ""
-	old = input[0]
-	older = ""
-	
-	for act in input[1:] + " ":
-		if act == quote and old == "\\" and older != "\\":
-			older = old
-			old = act
-			continue
-		else:
-			output += old
+	unesc = False
+	for act in inp:
+		if act == quote and unesc:
+			output = output[:-1]
 		
-		older = old
-		old = act
+		output += act
+		
+		if act == "\\":
+			unesc = not unesc
+		else:
+			unesc = False
 	
 	return output
 
@@ -819,6 +817,15 @@ def parseString(txt):
 #===============================================================================
 if __name__ == "__main__": 
 	"Unit tests"
+	
+	assert unescape(r"""\' \\ \" \n""")      == r"""\' \\ " \n"""
+	assert unescape(r"""\' \\ \" \n""", "'") == r"""' \\ \" \n"""
+	assert unescape(r"""\' \\" \n""")        == r"""\' \\" \n"""
+	assert unescape(r"""\' \\" \n""")        == r"""\' \\" \n"""
+	assert unescape(r"""printf(\"hello \t world\");""") == r"""printf("hello \t world");"""
+	
+	assert escape(r"""printf("hello world");""") == r"""printf(\"hello world\");"""
+	assert escape(r"""'""", "'") == r"""\'"""
 	
 	dom = parseString("""
 		"<div Id='xe' a='b'>obsah xe divu</div> <!-- Id, not id :) -->
