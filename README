@@ -28,8 +28,8 @@ Python version of DHTMLParser.
 |		If the element has parametres, you will find them here.
 |
 |++ HTMLElement endtag
-|		In case this tag is an Opener (<p> for example), this variable holds a 
-|		link to the closing element (</p>).
+|		In case this tag is an Opener (<p> for example), this variable holds
+|		a link to the closing element (</p>).
 |
 |++ HTMLElement openertag
 |		Analogous to endtag.
@@ -38,8 +38,8 @@ Python version of DHTMLParser.
 |
 |-- HTMLElement[] find(string tag_name, string[string] params = null, 
 |                      function fn = null, case_sensitive = False)
-|		Same as findAll, but doesn't returns endtags. You can always get them 
-|		from .endtag property.
+|		Same as findAll, but doesn't returns endtags. You can always get
+|		them from .endtag property.
 |
 |-- HTMLElement[] findAll(string tag_name, string[string] params = null,
 |                         function fn = null, case_sensitive = False)
@@ -48,8 +48,8 @@ Python version of DHTMLParser.
 |		Lets say that you want each link in a page - 'dom.find("a")' will 
 |		return an array of links.
 |
-|		You can also specify parametres or define a lambda function which will 
-|		find whatever you want.
+|		You can also specify parametres or define a lambda function which 
+|		will find whatever you want.
 |
 |-- HTMLElement[] findB(string tag_name, string[string] params = null, 
 |                      function fn = null, case_sensitive = False)
@@ -74,7 +74,8 @@ Python version of DHTMLParser.
 |		Returns true if closing tag. 
 |
 |-- bool isEndTagTo(HTMLElement opener)
-|		Returns true if this element is an end tag </tagname> for given element.
+|		Returns true if this element is an end tag </tagname> for given 
+|		element.
 |
 |-- bool isNonPairTag()
 |		Returns true if nonpair tag (<br /> for example).
@@ -103,8 +104,8 @@ Python version of DHTMLParser.
 |		Returns a string representation if tag, without childs.
 |
 |		If original == True, returns original string from which element was 
-|		parsed, so if you changed something in .params, there will be no traces
-|		of those changes.
+|		parsed, so if you changed something in .params, there will be no 
+|		traces of those changes.
 |
 |-- string getTagName()
 |		Tagname - <a href="bla"> returns "a".
