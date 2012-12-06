@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.5.1 (12.03.2012) by Bystroushaak (bystrousak@kitakitsune.org)
-This version corresponds with DHTMLParser v1.5.0.
+pyDHTMLParser v1.6.0 (06.12.2012) by Bystroushaak (bystrousak@kitakitsune.org)
+This version doesn't corresponds with DHTMLParser v1.5.0 - there were updates, which
+makes both parsers incompatible. Changelist: https://gist.github.com/d16b613b84ce9de8adb3
 
 This work is licensed under a Creative Commons 3.0 Unported License
 (http://creativecommons.org/licenses/by/3.0/cz/).
@@ -54,6 +55,18 @@ def rotate_buff(buff):
 	return buff
 
 
+class SpecialDict(dict):
+	"This dictionary stores items case sensitive, but compare them case INsensitive."
+	def __contains__(self, k):
+		for item in super(SpecialDict, self).keys():
+			if k.lower() == item.lower():
+				return True
+	def __getitem__(self, k):
+		for item in self.keys():
+			if k.lower() == item.lower():
+				return super(SpecialDict, self).__getitem__(item)
+
+
 class HTMLElement():
 	"""
 	Container for parsed html elements.
@@ -69,34 +82,38 @@ class HTMLElement():
 		self.__isnonpairtag = False
 		
 		self.childs = []
-		self.params = {}
+		self.params = SpecialDict()
 		self.endtag = None
 		self.openertag = None
 		
 		# blah, constructor overloading in python sux :P
 		if isinstance(tag, str) and second == None and third == None:
 			self.__init_tag(tag)
+
 		elif isinstance(tag, str) and isinstance(second, dict) and third == None:
 			self.__init_tag_params(tag, second)
+
 		elif isinstance(tag, str) and isinstance(second, dict) and (isinstance(third, list) or isinstance(third, tuple)) and len(third) > 0 and isinstance(third[0], HTMLElement):
 			self.__init_tag_params(tag, second)
 			self.childs = closeElements(third)
+
 		elif isinstance(tag, str) and (isinstance(second, list) or isinstance(second, tuple)) and len(second) > 0 and isinstance(second[0], HTMLElement):
+
 			# containers with childs are automatically considered as tags
 			if tag.strip() != "":
 				if not tag.startswith("<"):
 					tag = "<" + tag
 				if not tag.endswith(">"):
 					tag += ">"
+
 			self.__init_tag(tag)
 			self.childs = closeElements(second)
+
 		elif (isinstance(tag, list) or isinstance(tag, tuple)) and len(tag) > 0 and isinstance(tag[0], HTMLElement):
 			self.__init_tag("")
 			self.childs = closeElements(tag)
 		else:
 			raise Exception("Oh no, not this crap!")
-		
-		self.__tagname = self.__tagname.lower()
 
 
 	#===========================================================================
@@ -145,23 +162,23 @@ class HTMLElement():
 		self.__init_tag(output + nonpair + ">")
 
 
-	def find(self, tag_name, params = None, fn = None):
+	def find(self, tag_name, params = None, fn = None, case_sensitive = False):
 		"Same as findAll, but without endtags. You can always get them from .endtag property.."
 		
-		dom = self.findAll(tag_name, params, fn)
+		dom = self.findAll(tag_name, params, fn, case_sensitive)
 		
 		return filter(lambda x: not x.isEndTag(), dom)
 
 
-	def findB(self, tag_name, params = None, fn = None):
+	def findB(self, tag_name, params = None, fn = None, case_sensitive = False):
 		"Same as findAllB, but without endtags. You can always get them from .endtag property.."
 		
-		dom = self.findAllB(tag_name, params, fn)
+		dom = self.findAllB(tag_name, params, fn, case_sensitive)
 		
 		return filter(lambda x: not x.isEndTag(), dom)
 
 
-	def findAll(self, tag_name, params = None, fn = None):
+	def findAll(self, tag_name, params = None, fn = None, case_sensitive = False):
 		"""	
 		Simple search engine using Depth-first algorithm - http://en.wikipedia.org/wiki/Depth-first_search.
 		 
@@ -176,18 +193,21 @@ class HTMLElement():
 		
 		@param fn: User defined function for search.
 		@type fn: lambda function
+
+		@param case_sensitive: Search case sensitive. Default True.
+		@type case_sensitive: bool
 		
 		@return: Matches.
 		@rtype: Array of HTMLElements
 		"""
 		output = []
 		
-		if self.isAlmostEqual(tag_name, params, fn):
+		if self.isAlmostEqual(tag_name, params, fn, case_sensitive):
 			output.append(self)
 		
 		tmp = []
 		for el in self.childs:
-			tmp = el.findAll(tag_name, params, fn)
+			tmp = el.findAll(tag_name, params, fn, case_sensitive)
 			
 			if tmp != None and len(tmp) > 0:
 				output.extend(tmp)
@@ -195,7 +215,7 @@ class HTMLElement():
 		return output
 
 
-	def findAllB(self, tag_name, params = None, fn = None):
+	def findAllB(self, tag_name, params = None, fn = None, case_sensitive = False):
 		"""	
 		Simple search engine using Breadth-first algorithm - http://en.wikipedia.org/wiki/Breadth-first_search.
 		 
@@ -210,18 +230,21 @@ class HTMLElement():
 		
 		@param fn: User defined function for search.
 		@type fn: lambda function
-		
+
+		@param case_sensitive: Search case sensitive. Default True.
+		@type case_sensitive: bool
+
 		@return: Matches.
 		@rtype: Array of HTMLElements
 		"""
 		output = []
 		
-		if self.isAlmostEqual(tag_name, params, fn):
+		if self.isAlmostEqual(tag_name, params, fn, case_sensitive):
 			output.append(self)
 		
 		breadth_search = self.childs
 		for el in breadth_search:
-			if el.isAlmostEqual(tag_name, params, fn):
+			if el.isAlmostEqual(tag_name, params, fn, case_sensitive):
 				output.append(el)
 			
 			if len(el.childs) > 0:
@@ -332,7 +355,7 @@ class HTMLElement():
 			elif next_state == 2: # one word parameter without quotes
 				if c.strip() == "":
 					next_state = 0
-					self.params[key.lower()] = value
+					self.params[key] = value
 					key = ""
 					value = ""
 				else:
@@ -340,7 +363,7 @@ class HTMLElement():
 			elif next_state == 3: # quoted string
 				if c == end_quote and (buff[0] != "\\" or (buff[0]) == "\\" and buff[1] == "\\"):
 					next_state = 0
-					self.params[key.lower()] = unescape(value, end_quote)
+					self.params[key] = unescape(value, end_quote)
 					key = ""
 					value = ""
 					end_quote = ""
@@ -352,9 +375,9 @@ class HTMLElement():
 			
 		if key != "":
 			if end_quote != "" and value.strip() != "":
-				self.params[key.lower()] = unescape(value, end_quote)
+				self.params[key] = unescape(value, end_quote)
 			else:
-				self.params[key.lower()] = value
+				self.params[key] = value
 	
 	#* /Parsers ****************************************************************
 
@@ -495,16 +518,19 @@ class HTMLElement():
 	#===========================================================================
 	#= Operators ===============================================================
 	#===========================================================================
-	def toString(self):
+	def toString(self, original = False):
 		"""
-			Returns original string, which was parsed to DOM.
+			Returns almost original string (use original = True if you want exact copy).
 			
 			If you want prettified string, try .prettify()
+
+			If original == True, return parsed element, so if you changed something
+			in .params, there will be no traces of those changes.
 		"""
 		output = ""
 		
 		if self.childs != []:
-			output += self.__element
+			output += self.__element if original else self.tagToString()
 			
 			for c in self.childs:
 				output += c.toString()
@@ -521,7 +547,7 @@ class HTMLElement():
 		return self.toString()
 
 
-	def isAlmostEqual(self, tag_name, params = None, fn = None):
+	def isAlmostEqual(self, tag_name, params = None, fn = None, case_sensitive = False):
 		"""
 			Compare element with given tagname, params and/or by lambda function.
 			
@@ -531,6 +557,10 @@ class HTMLElement():
 		if fn != None:
 			if fn(self):
 				return True
+
+		if not case_sensitive:
+			self.__tagname = self.__tagname.lower()
+			tag_name = tag_name.lower()
 		
 		# compare tagname
 		if self.__tagname == tag_name and self.__tagname != "" and self.__tagname != None:
@@ -836,12 +866,12 @@ if __name__ == "__main__":
 	divXe = dom.find("div", {"id":"xe"})[0]
 	divXu = dom.find("div", {"id":"xu"})[0]
 	
-	assert divXe.tagToString() == """<div a="b" id="xe">"""
-	assert divXu.tagToString() == """<div a="b" id="xu">"""
+	# assert divXe.tagToString() == """<div a="b" id="xe">"""
+	# assert divXu.tagToString() == """<div a="b" id="xu">"""
 	
-	# unit test for toString (must returns original string)
-	assert divXe.toString() == """<div Id='xe' a='b'>obsah xe divu</div>"""
-	assert divXu.toString() == """<div id='xu' a='b'>obsah xu divu</div>"""
+	# unit test for toString
+	assert divXe.toString() == """<div a="b" Id="xe">obsah xe divu</div>"""
+	assert divXu.toString() == """<div a="b" id="xu">obsah xu divu</div>"""
 	
 	# getTagName() test
 	assert divXe.getTagName() == "div"

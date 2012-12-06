@@ -34,11 +34,15 @@ Python version of DHTMLParser.
 |++ HTMLElement openertag
 |		Analogous to endtag.
 |
-|-- HTMLElement[] find(string tag_name, string[string] params = null, function fn = null)
+|
+|
+|-- HTMLElement[] find(string tag_name, string[string] params = null, 
+|                      function fn = null, case_sensitive = False)
 |		Same as findAll, but doesn't returns endtags. You can always get them 
 |		from .endtag property.
 |
-|-- HTMLElement[] findAll(string tag_name, string[string] params = null, function fn = null)
+|-- HTMLElement[] findAll(string tag_name, string[string] params = null,
+|                         function fn = null, case_sensitive = False)
 |		One of the most important methods, which handles DOM queries.
 |
 |		Lets say that you want each link in a page - 'dom.find("a")' will 
@@ -47,8 +51,21 @@ Python version of DHTMLParser.
 |		You can also specify parametres or define a lambda function which will 
 |		find whatever you want.
 |
+|-- HTMLElement[] findB(string tag_name, string[string] params = null, 
+|                      function fn = null, case_sensitive = False)
+|		Same as findAll, but using Breadth-first algorithm 
+|		http://en.wikipedia.org/wiki/Breadth-first_search
+|
+|-- HTMLElement[] findAllB(string tag_name, string[string] params = null,
+|                         function fn = null, case_sensitive = False)
+|		Same as findAll, but using Breadth-first algorithm 
+|		http://en.wikipedia.org/wiki/Breadth-first_search
+|
+|
+|
 |-- bool isTag()
-|		Returns true if the element is a tag (closed in <>). Comments aren't tags!
+|		Returns true if the element is a tag (closed in <>). Comments aren't 
+|		tags!
 |
 |-- bool isOpeningTag()
 |		Returns strue if element have .endtag (is closed).
@@ -68,29 +85,47 @@ Python version of DHTMLParser.
 |-- bool isComment()
 |		Returns true if this element is an HTML comment (<!-- -->).
 |
+|-- bool isAlmostEqual(self, tag_name, params = None, fn = None, 
+|                      case_sensitive = False)
+|		Compare element with given tagname, params and/or by lambda function.
+|
+|		Lambda function is same as in .find().
+|
+|
+|
 |-- string __str__()
 |		String representation of this element, same as prettify().
 |
 |-- string prettify()
 |		Returns prettified HTML output with childs (full document).
 |
-|-- void replaceWith(HTMLElement el)
-|		Replace element. Useful when you don't want change all references to object.
-|
-|	void removeChild(HTMLElement child, bool end_tag_too = true)
-|		Removes given subelement. Element is specified by reference, not by
-|		value, so it always removes only one element!
-|
-|		end_tag_too specifies if endtag shoud be removed too. Default true.
-|
-|-- string tagToString()
+|-- string tagToString(original = False)
 |		Returns a string representation if tag, without childs.
+|
+|		If original == True, returns original string from which element was 
+|		parsed, so if you changed something in .params, there will be no traces
+|		of those changes.
 |
 |-- string getTagName()
 |		Tagname - <a href="bla"> returns "a".
 |
-`-- string getContent()
-		Childs to string.
+|-- string getContent()
+|		Childs to string.
+|
+|
+|
+|-- void replaceWith(HTMLElement el)
+|		Replace element. Useful when you don't want change all references to 
+|		object.
+|
+|-- void removeChild(HTMLElement child, bool end_tag_too = true)
+|		Removes given subelement. Element is specified by reference, not by
+|		value, so it always removes only one element!
+|
+`--		end_tag_too specifies if endtag shoud be removed too. Default true.
+
+
+
 
 = Creating DOM =
 	If you want to create DOM from HTMLElements, you can use one of theese 
@@ -107,14 +142,38 @@ Python version of DHTMLParser.
 	
 	These constructors are useful for creating documents:
 	
-		HTMLElement("tag", {"param":"value"}, [HTMLElement("<tag1>"), HTMLElement("<tag2>"), ...])
-			With specified tag, params and childs.
-			
-		HTMLElement("tag", [HTMLElement("<tag1>"), HTMLElement("<tag2>"), ...])
-			With specified tag and childs.
+		With specified tag, params and childs:
 
-		HTMLElement([HTMLElement("<tag1>"), HTMLElement("<tag2>"), ...])
-			With speicifed childs. Usefull for containers.
+		HTMLElement(
+			"tag",
+			{"param":"value"}, 
+			[
+				HTMLElement("<tag1>"), 
+				HTMLElement("<tag2>"),
+				...
+			]
+		)
+
+		With specified tag and childs:
+		
+		HTMLElement(
+			"tag",
+			[
+				HTMLElement("<tag1>"),
+				HTMLElement("<tag2>"),
+				...
+			]
+		)
+
+		With speicifed childs. Usefull for containers:
+		
+		HTMLElement(
+			[
+				HTMLElement("<tag1>"),
+				HTMLElement("<tag2>"),
+				...
+			]
+		)
 
 = Confused? =
 	If you don't understand how to use it, look at examples in ./examples/.
