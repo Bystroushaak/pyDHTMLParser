@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.6.0 (06.12.2012) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.6.1 (28.01.2013) by Bystroushaak (bystrousak@kitakitsune.org)
 This version doesn't corresponds with DHTMLParser v1.5.0 - there were updates, which
 makes both parsers incompatible. Changelist: https://gist.github.com/d16b613b84ce9de8adb3
 
@@ -10,7 +10,7 @@ This work is licensed under a Creative Commons 3.0 Unported License
 
 Project page; https://github.com/Bystroushaak/pyDHTMLParser
 
-Created in Geany & gedit text editor.
+Created in Geany, Gedit and Sublime Text 2.
 """
 
 def unescape(inp, quote = '"'):
@@ -529,7 +529,7 @@ class HTMLElement():
 		"""
 		output = ""
 		
-		if self.childs != []:
+		if self.childs != [] or self.isOpeningTag():
 			output += self.__element if original else self.tagToString()
 			
 			for c in self.childs:
