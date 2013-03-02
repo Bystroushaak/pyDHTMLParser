@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.6.1 (28.01.2013) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.6.2 (02.03.2013) by Bystroushaak (bystrousak@kitakitsune.org)
 This version doesn't corresponds with DHTMLParser v1.5.0 - there were updates, which
 makes both parsers incompatible. Changelist: https://gist.github.com/d16b613b84ce9de8adb3
 
@@ -533,7 +533,7 @@ class HTMLElement():
 			output += self.__element if original else self.tagToString()
 			
 			for c in self.childs:
-				output += c.toString()
+				output += c.toString(original)
 			
 			if self.endtag != None:
 				output += self.endtag.tagToString()
