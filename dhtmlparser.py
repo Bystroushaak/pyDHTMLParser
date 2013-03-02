@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.6.2 (02.03.2013) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.6.3 (02.03.2013) by Bystroushaak (bystrousak@kitakitsune.org)
 This version doesn't corresponds with DHTMLParser v1.5.0 - there were updates, which
 makes both parsers incompatible. Changelist: https://gist.github.com/d16b613b84ce9de8adb3
 
@@ -432,7 +432,7 @@ class HTMLElement():
 
 	def tagToString(self):
 		"Returns tag (with parameters), without content or endtag."
-		if not self.isOpeningTag():
+		if len(self.params) <= 0:
 			return self.__element
 		else:
 			output = "<" + str(self.__tagname)
