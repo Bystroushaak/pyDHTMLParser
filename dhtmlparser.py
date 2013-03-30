@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.6.3 (02.03.2013) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.6.4 (30.03.2013) by Bystroushaak (bystrousak@kitakitsune.org)
 This version doesn't corresponds with DHTMLParser v1.5.0 - there were updates, which
 makes both parsers incompatible. Changelist: https://gist.github.com/d16b613b84ce9de8adb3
 
@@ -136,7 +136,7 @@ class HTMLElement():
 			self.__parseIsEndTag()
 			self.__parseIsNonPairTag()
 			
-			if self.__istag and (not self.__isendtag) and "=" in self.__element:
+			if self.__istag and (not self.__isendtag) or "=" in self.__element:
 				self.__parseParams()
 
 
@@ -378,6 +378,10 @@ class HTMLElement():
 				self.params[key] = unescape(value, end_quote)
 			else:
 				self.params[key] = value
+
+		if len(filter(lambda x: x == "/", self.params.keys())) > 0:
+			del self.params["/"]
+			self.__isnonpairtag = True
 	
 	#* /Parsers ****************************************************************
 
@@ -440,7 +444,7 @@ class HTMLElement():
 			for key in self.params.keys():
 				output += " " + key + "=\"" + escape(self.params[key], '"') + "\""
 			
-			return output + ">"
+			return output + " />" if self.__isnonpairtag else output + ">" 
 
 
 	def getTagName(self):
