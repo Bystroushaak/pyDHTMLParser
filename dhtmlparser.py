@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.6.4 (30.03.2013) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.7.0 (05.04.2013) by Bystroushaak (bystrousak@kitakitsune.org)
 This version doesn't corresponds with DHTMLParser v1.5.0 - there were updates, which
 makes both parsers incompatible. Changelist: https://gist.github.com/d16b613b84ce9de8adb3
 
@@ -843,6 +843,16 @@ def parseString(txt):
 	
 	return container
 
+
+
+def makeDoubleLinked(dom, parent = None):
+	"Standard output from dhtmlparser is single-linked tree. This will make it double-linked."
+	dom.parent = parent
+
+	if len(dom.childs) > 0:
+		for child in dom.childs:
+			child.parent = dom
+			makeDoubleLinked(child, dom)
 
 
 
