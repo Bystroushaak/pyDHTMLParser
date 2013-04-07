@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-pyDHTMLParser v1.7.0 (05.04.2013) by Bystroushaak (bystrousak@kitakitsune.org)
+pyDHTMLParser v1.7.1 (07.04.2013) by Bystroushaak (bystrousak@kitakitsune.org)
 This version doesn't corresponds with DHTMLParser v1.5.0 - there were updates, which
 makes both parsers incompatible. Changelist: https://gist.github.com/d16b613b84ce9de8adb3
 
@@ -458,7 +458,7 @@ class HTMLElement():
 		
 		for c in self.childs:
 			if not c.isEndTag():
-				output += c.prettify()
+				output += c.toString()
 		
 		if output.endswith("\n"):
 			output = output[:-1]
@@ -860,7 +860,7 @@ def makeDoubleLinked(dom, parent = None):
 #= Main program ================================================================
 #===============================================================================
 if __name__ == "__main__": 
-	"Unit tests"
+	print "Testing.."
 	
 	assert unescape(r"""\' \\ \" \n""")      == r"""\' \\ " \n"""
 	assert unescape(r"""\' \\ \" \n""", "'") == r"""' \\ \" \n"""
@@ -917,3 +917,5 @@ if __name__ == "__main__":
 	
 	assert dom.find("div")[1].getContent().strip() == "Subdiv in first div."
 	assert dom.findB("div")[1].getContent().strip() == "Second."
+
+	print "Everything ok."
