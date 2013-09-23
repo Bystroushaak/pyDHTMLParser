@@ -20,14 +20,14 @@ for e in dom.find("object1"):
 	dom.removeChild(e)
 
 
-print dom
+print dom.prettify()
 
 
 #* Prints: *********************************************************************
 """
 <root>
-  <object1>Content of first object</object1>
-  <object2>Second objects content</object2>
+	<object1>Content of first object</object1>
+	<object2>Second objects content</object2>
 </root>
 
 ---
