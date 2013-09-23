@@ -1,0 +1,274 @@
+Python version of [[https://github.com/Bystroushaak/DHTMLParser|DHTMLParser]]. 
+This version is actually much more advanced, D version is kinda unupdated.
+
+= What is it?
+DHTMLParser is a lightweight parser created for one purpose - quick parsing 
+of selected information, if you know where to look.
+
+It can be very useful when you're writing your own API for a page, or a 
+checker (a script that is continuously checking something on the web and 
+alerts you when the information being checked has been changed).
+
+If you want, you can also create HTML/XML documents much more easily than 
+from a string.
+
+= How it works?
+The module has just one, important function - parseString(), which takes
+a string and returns a DOM (Document Object Model) made of HTMLElement 
+objects.
+
+The DOM is encapsulated in a container - a blank HTMLElement that holds
+the whole DOM in its .childs property.
+
+Ïf you wan't to parse XML and don't want to guess nonpair tag from source, just
+set global NONPAIR_TAGS table to blank list.
+
+= HTMLElement
+{{{
+|
+|++ HTMLElement[] childs
+|		If the element has children, they are stored in this property.
+|
+|++ string[string] params
+|		If the element has parametres, you will find them here.
+|
+|++ HTMLElement endtag
+|		In case this tag is an Opener (<p> for example), this variable holds
+|		a link to the closing element (</p>).
+|
+|++ HTMLElement openertag
+|		Analogous to endtag.
+|
+|
+|
+|-- HTMLElement[] find(string tag_name, string[string] params = null, 
+|                      function fn = null, case_sensitive = False)
+|		Same as findAll, but doesn't returns endtags. You can always get
+|		them from .endtag property.
+|
+|-- HTMLElement[] findAll(string tag_name, string[string] params = null,
+|                         function fn = null, case_sensitive = False)
+|		One of the most important methods, which handles DOM queries.
+|
+|		Lets say that you want each link in a page - 'dom.find("a")' will 
+|		return an array of links.
+|
+|		You can also specify parametres or define a lambda function which 
+|		will find whatever you want.
+|
+|-- HTMLElement[] findB(string tag_name, string[string] params = null, 
+|                      function fn = null, case_sensitive = False)
+|		Same as findAll, but using Breadth-first algorithm 
+|		http://en.wikipedia.org/wiki/Breadth-first_search
+|
+|-- HTMLElement[] findAllB(string tag_name, string[string] params = null,
+|                         function fn = null, case_sensitive = False)
+|		Same as findAll, but using Breadth-first algorithm 
+|		http://en.wikipedia.org/wiki/Breadth-first_search
+|
+|
+|
+|-- bool isTag()
+|		Returns true if the element is a tag (closed in <>). Comments aren't 
+|		tags!
+|
+|-- bool isOpeningTag()
+|		Returns strue if element have .endtag (is closed).
+|
+|-- bool isEndTag()
+|		Returns true if closing tag. 
+|
+|-- bool isEndTagTo(HTMLElement opener)
+|		Returns true if this element is an end tag </tagname> for given 
+|		element.
+|
+|-- bool isNonPairTag()
+|		Returns True if HTMLElement is listed nonpair tag table (br for example)
+|		or if it ends with / - <br /> for example.
+|
+|		You can also change state from pair to nonpair if you use this as setter.
+|
+|-- bool isPairTag()
+|		Return True if this is paired tag - <body> .. </body> for example.
+|
+|-- bool isComment()
+|		Returns true if this element is an HTML comment (<!-- -->).
+|
+|-- bool isAlmostEqual(self, tag_name, params = None, fn = None, 
+|                      case_sensitive = False)
+|		Compare element with given tagname, params and/or by lambda function.
+|
+|		Lambda function is same as in .find().
+|
+|-- string __str__()
+|		String representation of this element, same as prettify().
+|
+|-- string prettify()
+|		Returns prettified HTML output with childs (full document).
+|
+|-- string tagToString(original = False)
+|		Returns a string representation if tag, without childs.
+|
+|		If original == True, returns original string from which element was 
+|		parsed, so if you changed something in .params, there will be no 
+|		traces of those changes.
+|
+|-- string getTagName()
+|		Tagname - <a href="bla"> returns "a".
+|
+|-- string getContent()
+|		Childs to string.
+|
+|
+|
+|-- void replaceWith(HTMLElement el)
+|		Replace element. Useful when you don't want change all references to 
+|		object.
+|
+|-- void removeChild(HTMLElement child, bool end_tag_too = true)
+|		Removes given subelement. Element is specified by reference, not by
+|		value, so it always removes only one element!
+|
+`--		end_tag_too specifies if endtag shoud be removed too. Default true.
+}}}
+
+
+
+= DOM building
+If you want to create DOM from HTMLElements, you can use one of theese four constructors:
+
+{{{
+HTMLElement()
+HTMLElement("<tag>")
+HTMLElement("<tag>", {"param":"value"})
+HTMLElement("tag", {"param":"value"}, [HTMLElement("<tag1>"), ...])
+}}}
+
+Tag or parameter specification parts can be omitted:
+
+{{{
+HTMLElement("<root>", [HTMLElement("<tag1>"), ...])
+HTMLElement(
+	[HTMLElement("<tag1>"), ...]
+)
+}}}
+
+== Examples
+
+=== Blank element
+{{{
+>>> from dhtmlparser import HTMLElement 
+>>> e = HTMLElement()
+>>> e
+<dhtmlparser.HTMLElement instance at 0x7fb2b39ca170>
+>>> print e
+
+>>> 
+}}}
+
+Usually, it is better to use {{{HTMLElement("")}}}.
+
+=== Nonpair tag
+	
+{{{
+
+>>> e = HTMLElement("<br>")
+>>> e.isNonPairTag()
+True
+>>> e.isOpeningTag()
+False
+>>> print e
+<br>
+}}}
+
+Notice, that closing tag is not created this way.
+
+=== Pair tag
+
+{{{
+>>> e = HTMLElement("<tag>")
+>>> e.isOpeningTag() # this doesn't check if tag actually is paired, just if it looks like opening tag
+True
+>>> e.isPairTag()    # this does check if element is actually paired
+False
+>>> e.endtag = HTMLElement("</tag>")
+>>> e.isOpeningTag()
+True
+>>> e.isOpeningTag()
+True
+>>> print e
+<tag></tag>
+}}}
+
+In short:
+
+{{{
+>>> e = HTMLElement("<tag>")
+>>> e.endtag = HTMLElement("</tag>")
+}}}
+
+Or you can always use string parsing:
+
+{{{
+>>> e = d.parseString("<tag></tag>")
+>>> print e
+<tag></tag>
+}}}
+
+But don't forget, that elements returned from parseString() are encapsulated in blank tag:
+
+{{{
+>>> e = d.parseString("<tag></tag>")
+>>> e.getTagName()
+''
+>>> e.childs[0].tagToString()
+'<tag>'
+>>> e.childs[0].endtag.tagToString() # referenced thru .endtag property
+>>> e.childs[1].tagToString() # manually selected entag from childs - don't use this
+'</tag>'
+'</tag>
+}}}
+
+=== Tags with parameters
+
+Tag (with or without <>) can have dictionary parameters.
+
+{{{
+>>> e = HTMLElement("tag", {"param":"value"}) # without <>, because normal text can't have parameters
+>>> print e
+<tag param="value">
+>>> print e.params # parameters are accessed thru .params property
+{'param': 'value'}
+}}}
+
+=== Tags with content
+
+You can create content manually:
+
+{{{
+>>> e = HTMLElement("<tag>")
+>>> e.childs.append(HTMLElement("content"))
+>>> e.endtag = HTMLElement("</tag>")
+>>> print e
+<tag>content</tag>
+}}}
+
+But there is also easier way:
+
+{{{
+>>> print HTMLElement("tag", [HTMLElement("content")])
+<tag>content</tag>
+}}}
+
+or 
+
+{{{
+>>> print HTMLElement("tag", {"some":"parameter"}, [HTMLElement("content")])
+<tag some="parameter">content</tag>
+}}}
+
+= Confused? =
+If you don't understand how to use it, look at examples in ./examples/.
+	
+If you have questions, you can write me an email to: {{{bystrousak}}}{{{@kitakitsune.org}}}
+
