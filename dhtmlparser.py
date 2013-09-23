@@ -317,11 +317,11 @@ class HTMLElement():
 		for el in self.__element.split(" "):
 			el = el.replace("/", "").replace("<", "").replace(">", "")
 			if len(el) > 0:
-				self.__tagname = el
+				self.__tagname = el.rstrip()
 				return
 
 
-	def __parseParams(self):	
+	def __parseParams(self):
 		# check if there are any parameters
 		if " " not in self.__element or "=" not in self.__element:
 			return
