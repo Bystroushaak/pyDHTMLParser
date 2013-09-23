@@ -2,23 +2,20 @@
 # -*- coding: utf-8 -*-
 #
 # DHTMLParser DOM creation example.
-    # 
 from dhtmlparser import *
 
-e = HTMLElement([
-		HTMLElement("<root>", [
-			HTMLElement("item", {"param1":"1", "param2":"2"}, [
-				HTMLElement("<crap>", [
-					HTMLElement("hello parser!")
-				]),
-				HTMLElement("<another_crap/>", {"with" : "params"}),
-				HTMLElement("<!-- comment -->")
+e = HTMLElement("root", [
+		HTMLElement("item", {"param1":"1", "param2":"2"}, [
+			HTMLElement("<crap>", [
+				HTMLElement("hello parser!")
 			]),
-			HTMLElement("<item />", {"blank" : "body"})
-		])
+			HTMLElement("<another_crap/>", {"with" : "params"}),
+			HTMLElement("<!-- comment -->")
+		]),
+		HTMLElement("<item />", {"blank" : "body"})
 	])
 
-print e
+print e.prettify()
 
 """
 Writes:
