@@ -114,13 +114,21 @@ class HTMLElement():
 		elif isinstance(tag, str) and isinstance(second, dict) and     \
 		     (isinstance(third, list) or isinstance(third, tuple)) and \
 		     len(third) > 0 and isinstance(third[0], HTMLElement):
+
+			# containers with childs are automatically considered tags
+			if tag.strip() != "":
+				if not tag.startswith("<"):
+					tag = "<" + tag
+				if not tag.endswith(">"):
+					tag += ">"
 			self.__init_tag_params(tag, second)
 			self.childs = closeElements(third)
+			self.endtag = HTMLElement("</" + self.getTagName() + ">")
 		elif isinstance(tag, str) and (isinstance(second, list) or \
 			 isinstance(second, tuple)) and len(second) > 0 and    \
 			 isinstance(second[0], HTMLElement):
 
-			# containers with childs are automatically considered as tags
+			# containers with childs are automatically considered tags
 			if tag.strip() != "":
 				if not tag.startswith("<"):
 					tag = "<" + tag
@@ -129,7 +137,7 @@ class HTMLElement():
 
 			self.__init_tag(tag)
 			self.childs = closeElements(second)
-
+			self.endtag = HTMLElement("</" + self.getTagName() + ">")
 		elif (isinstance(tag, list) or isinstance(tag, tuple)) and len(tag) > 0 \
 		     and isinstance(tag[0], HTMLElement):
 			self.__init_tag("")
@@ -597,6 +605,10 @@ class HTMLElement():
 
 		Lambda function is same as in .find().
 		"""
+
+		if isinstance(tag_name, HTMLElement):
+			return self.isAlmostEqual(tag_name.getTagName(), self.params)
+
 		# search by lambda function
 		if fn is not None:
 			if fn(self):
