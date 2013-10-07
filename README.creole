@@ -2,48 +2,46 @@ Python version of [[https://github.com/Bystroushaak/DHTMLParser|DHTMLParser]].
 This version is actually much more advanced, D version is kinda unupdated.
 
 = What is it?
-DHTMLParser is a lightweight parser created for one purpose - quick parsing 
-of selected information, if you know where to look.
+DHTMLParser is a lightweight parser created for one purpose - quick and easy picking
+of selected tags from DOM.
 
 It can be very useful when you are writing your own API for a page, or a 
-checker (a script that is continuously checking something on the web and 
-alerts you when the information being checked has been changed).
+checker or you just need to write quick and dirty web scraper.
 
-If you want, you can also create HTML/XML documents much more easily than 
-from a string.
+If you want, you can also create HTML/XML documents more easily than by joining strings.
 
 = How it works?
-The module has just one, important function - {{{parseString(s)}}}, which takes
-a string and returns a DOM (Document Object Model) made of linked {{{HTMLElement}}}
-(see bellow) objects.
+The module have just one important function - {{{parseString(s)}}}. This function takes
+a string and returns a Document Object Model made of linked {{{HTMLElement}}}
+objects (see bellow).
 
-When you call {{{.parseString()}}}, the string argument is cut to pieces and
-then evaluated. Each piece is checked and if it looks like HTML element, then
-it is put into {{{HTMLElement}}} object and every following element is put
-into {{{.childs}}} property, until proper closing element is found..
+When you call {{{.parseString(s)}}}, the string argument is cut into pieces and
+then evaluated. Each piece is checked and if it looks like it could be HTML element, then
+it is put into {{{HTMLElement}}} object and proper variables are set (self.__istag and so on). 
 
-Elements with parameters are evaluated even more and parameters are extracted 
-into {{{.params}}} property.
+Every following element is put into {{{.childs}}} list of this element, until proper 
+closing element is found by simple stack mechanism.
 
-This algorithm is recursively called for each element, which produce single 
-linked tree (you can double link it later, if you want by calling 
-{{{dhtmlparser.makeDoubleLinked(dom)}}}).
+Elements with parameters are parsed and parameters are extracted into {{{.params}}} 
+property.
 
-Array of trees is then encapsulated in a blank HTMLElement container, which holds
-the whole DOM in its {{{.childs}}} property.
+Result is array of single linked trees (you can make double linke by calling 
+{{{dhtmlparser.makeDoubleLinked(dom)}}}), which is then encapsulated in a blank 
+HTMLElement container, which holds the whole DOM in its {{{.childs}}} property.
 
-If you want to parse XML and don't want to guess nonpair tags from source, just
-set global module property {{{NONPAIR_TAGS}}} to blank list.
+If you want to parse XML and don't want parser to guess nonpair tags from source,
+just set global module property {{{NONPAIR_TAGS}}} to blank list.
 
 == Interactive example
 
 {{{
+>>> import dhtmlparser as d
 >>> dom = d.parseString("""
 ... <root>
 ...  <element name="xex" />
 ... </root>
 ... """)
->>> pprint(dom)
+>>> print dom
 <dhtmlparser.HTMLElement instance at 0x240b320>
 >>> dom.getTagName()  # blank, container element
 ''
