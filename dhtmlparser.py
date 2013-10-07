@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Author:  Bystroushaak (bystrousak@kitakitsune.org)
-Version: 1.7.2
+Version: 1.7.3
 
 This version doens't corresponds with DHTMLParser v1.5.0 - there were updates,
 which makes both parsers incompatible.
@@ -871,7 +871,7 @@ def __parseDOM(istack):
 		if end_tag_index != 0:
 			el.childs = __parseDOM(istack[index + 1: end_tag_index + index])
 			el.endtag = istack[end_tag_index + index]  # Reference to endtag
-			el.openertag = el
+			el.endtag.openertag = el
 			ostack.append(el)
 			ostack.append(el.endtag)
 			index = end_tag_index + index
@@ -886,7 +886,10 @@ def __parseDOM(istack):
 
 
 def parseString(txt):
-	"Parse given string and return DOM from HTMLElements."
+	"""
+	Parse given string and return DOM tree consisting of single linked
+	HTMLElements.
+	"""
 	istack = []
 
 	# remove UTF BOM (prettify fails if not)
