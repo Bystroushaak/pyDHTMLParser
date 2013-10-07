@@ -37,7 +37,8 @@ set global module property {{{NONPAIR_TAGS}}} to blank list.
 
 == Interactive example
 
-{{{>>> dom = d.parseString("""
+{{{
+>>> dom = d.parseString("""
 ... <root>
 ...  <element name="xex" />
 ... </root>
@@ -45,16 +46,10 @@ set global module property {{{NONPAIR_TAGS}}} to blank list.
 >>> pprint(dom)
 <dhtmlparser.HTMLElement instance at 0x240b320>
 >>> dom.getTagName()  # blank, container element
-''}}}
+''
+}}}
 
-
-dom = d.parseString("""
- <root>
-  <element name="xex" />
-</root>
-""")
-
-DOM tree now looks like this:
+DOM tree now in memory looks like this:
 
 {{{
 dom == <dhtmlparser.HTMLElement instance at 0x240b320>
@@ -154,10 +149,12 @@ parameter set to {{{"xex"}}}:
 
 Or we wan't only {{{<element>}}} tags with {{{name="xex"}}} parameters:
 
-{{{>>> dom.find("element", {"name":"xex"})
+{{{
+>>> dom.find("element", {"name":"xex"})
 [<dhtmlparser.HTMLElement instance at 0x2403d88>]
 >>> dom.find("element", {"nAme":"xex"})  # case insensitive
-[<dhtmlparser.HTMLElement instance at 0x2403d88>]}}}
+[<dhtmlparser.HTMLElement instance at 0x2403d88>]
+}}}
 
 
 = HTMLElement property/method list
