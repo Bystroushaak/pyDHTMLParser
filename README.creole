@@ -26,7 +26,7 @@ Elements with parameters are evaluated even more and parameters are extracted
 into {{{.params}}} property.
 
 This algorithm is recursively called for each element, which produce single 
-linked tree (you can double link it later, if you wan't by calling 
+linked tree (you can double link it later, if you want by calling 
 {{{dhtmlparser.makeDoubleLinked(dom)}}}).
 
 Array of trees is then encapsulated in a blank HTMLElement container, which holds
@@ -147,12 +147,12 @@ parameter set to {{{"xex"}}}:
 [<dhtmlparser.HTMLElement instance at 0x2403d88>]
 }}}
 
-Or we wan't only {{{<element>}}} tags with {{{name="xex"}}} parameters:
+Or we want only {{{<element>}}} tags with {{{name="xex"}}} parameters:
 
 {{{
 >>> dom.find("element", {"name":"xex"})
 [<dhtmlparser.HTMLElement instance at 0x2403d88>]
->>> dom.find("element", {"nAme":"xex"})  # case insensitive
+>>> dom.find("element", {"NAME":"xex"})  # parameter names (not values!) are case insensitive
 [<dhtmlparser.HTMLElement instance at 0x2403d88>]
 }}}
 
