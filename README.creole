@@ -5,7 +5,7 @@ This version is actually much more advanced, D version is kinda unupdated.
 DHTMLParser is a lightweight parser created for one purpose - quick parsing 
 of selected information, if you know where to look.
 
-It can be very useful when you're writing your own API for a page, or a 
+It can be very useful when you are writing your own API for a page, or a 
 checker (a script that is continuously checking something on the web and 
 alerts you when the information being checked has been changed).
 
@@ -13,7 +13,7 @@ If you want, you can also create HTML/XML documents much more easily than
 from a string.
 
 = How it works?
-The module has just one, important function - parseString(), which takes
+The module has just one, important function - {{{parseString(s)}}}, which takes
 a string and returns a DOM (Document Object Model) made of HTMLElement 
 objects.
 
