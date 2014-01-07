@@ -110,13 +110,13 @@ dom == <dhtmlparser.HTMLElement instance at 0x240b320>
    |  |- .endtag       == None
    |  `- .childs       == []
    |
-    `- .childs[3]       == <dhtmlparser.HTMLElement instance at 0x240b248>
-       |- .getTagName() == '\n'
-       |- .isTag()      == False
-       |- .params       == {}
-       |- .openertag    == None
-       |- .endtag       == None
-       `- .childs       == []
+   `- .childs[3]       == <dhtmlparser.HTMLElement instance at 0x240b248>
+      |- .getTagName() == '\n'
+      |- .isTag()      == False
+      |- .params       == {}
+      |- .openertag    == None
+      |- .endtag       == None
+      `- .childs       == []
 }}}
 
 In interactive shell, we can easily verify the tree:
@@ -271,10 +271,14 @@ Or we want only {{{<element>}}} tags with {{{name="xex"}}} parameters:
 |	Standard output from dhtmlparser is single-linked tree. This will make it 
 |	double-linked.
 |
-`-- HTMLElement parseString(str)
-	Parse given string and return DOM tree consisting of single linked 
-	HTMLElements.
+|-- HTMLElement parseString(str)
+|	Parse given string and return DOM tree consisting of single linked 
+|	HTMLElements.
+|
+`-- str removeTags(dom)
+	Remove all tags from dom, so result should be plaintext.
 
+	dom -- string, HTMLElement or just array of elements.
 }}}
 
 = DOM building

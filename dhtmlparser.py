@@ -920,6 +920,42 @@ def makeDoubleLinked(dom, parent = None):
 
 
 
+def removeTags(dom):
+	"""
+	Remove all tags from dom, so result should be plaintext.
+
+	dom -- string, HTMLElement or just array of elements.
+	"""
+	output = ""
+
+	# initialize stack with proper value (based on dom parameter)
+	element_stack = None
+	if isinstance(dom, list) or isinstance(dom, tuple):
+		element_stack = dom
+	elif isinstance(dom, HTMLElement):
+		if not dom.isTag():
+			element_stack = [dom]
+		else:
+			element_stack = dom.childs
+	elif isinstance(dom, str):
+		element_stack = parseString(dom).childs
+	else:
+		element_stack = dom
+
+	# remove all tags
+	for el in element_stack:
+		if not (el.isTag() or el.isComment()):
+			output += str(el)
+
+		if el.isOpeningTag():
+			output += el.getContent()
+
+		if len(el.childs) > 0:
+			element_stack.extend(el.childs)
+
+	return output
+
+
 #==============================================================================
 #= Main program ===============================================================
 #==============================================================================
