@@ -11,7 +11,7 @@ url = 'https://github.com/Bystroushaak/pyDHTMLParser'
 
 setup(
 	name         = 'pyDHTMLParser',
-	version      = '1.7.2',
+	version      = '1.7.4',
 	py_modules   = ['dhtmlparser'],
 
 	author       = 'Bystroushaak',

@@ -2,7 +2,6 @@
 # -*- coding: utf-8 -*-
 """
 Author:  Bystroushaak (bystrousak@kitakitsune.org)
-Version: 1.7.3
 
 This version doens't corresponds with DHTMLParser v1.5.0 - there were updates,
 which makes both parsers incompatible.
