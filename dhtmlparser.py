@@ -947,9 +947,6 @@ def removeTags(dom):
 		if not (el.isTag() or el.isComment()):
 			output += str(el)
 
-		if el.isOpeningTag():
-			output += el.getContent()
-
 		if len(el.childs) > 0:
 			element_stack.extend(el.childs)
 
