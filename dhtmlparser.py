@@ -942,12 +942,14 @@ def removeTags(dom):
 		element_stack = dom
 
 	# remove all tags
-	for el in element_stack:
-		if not (el.isTag() or el.isComment()):
+	while len(element_stack) > 0:
+		el = element_stack.pop(0)
+
+		if not (el.isTag() or el.isComment() or el.getTagName() == ""):
 			output += str(el)
 
 		if len(el.childs) > 0:
-			element_stack.extend(el.childs)
+			element_stack = el.childs + element_stack
 
 	return output
 
@@ -973,8 +975,8 @@ if __name__ == "__main__":
 	""")
 
 	# find test
-	divXe = dom.find("div", {"id":"xe"})[0]
-	divXu = dom.find("div", {"id":"xu"})[0]
+	divXe = dom.find("div", {"id": "xe"})[0]
+	divXu = dom.find("div", {"id": "xu"})[0]
 
 	# assert divXe.tagToString() == """<div a="b" id="xe">"""
 	# assert divXu.tagToString() == """<div a="b" id="xu">"""
@@ -988,7 +990,7 @@ if __name__ == "__main__":
 	assert divXu.getTagName() == "div"
 
 	# isComment() test
-	assert divXe.isComment() == False
+	assert divXe.isComment() is False
 	assert divXe.isComment() == divXu.isComment()
 
 	assert divXe.isNonPairTag() != divXe.isOpeningTag()
@@ -1013,5 +1015,9 @@ if __name__ == "__main__":
 
 	assert dom.find("div")[1].getContent().strip() == "Subdiv in first div."
 	assert dom.findB("div")[1].getContent().strip() == "Second."
+
+	# test removeTags()
+	assert removeTags(divXe) == "obsah xe divu"
+	assert removeTags(parseString("a<b>xax<i>xe</i>xi</b>d")) == "axaxxexid"
 
 	print "Everything ok."
