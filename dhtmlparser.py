@@ -62,13 +62,10 @@ def escape(input, quote = '"'):
 
 
 def rotate_buff(buff):
-	"Rotate buffer (for each buff[i] = buff[i-1])"
-	i = len(buff) - 1
-	while i > 0:
-		buff[i] = buff[i - 1]
-		i -= 1
-
-	return buff
+	"""
+	Rotate buffer (for each buff[i] = buff[i-1]).
+	"""
+	return [buff[-1]] + buff[:-1]
 
 
 class SpecialDict(dict):
