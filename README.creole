@@ -1,5 +1,13 @@
-Python version of [[https://github.com/Bystroushaak/DHTMLParser|DHTMLParser]]. 
+Python version of [[https://github.com/Bystroushaak/DHTMLParser|DHTMLParser]].
 This version is actually much more advanced, D version is kinda unupdated.
+
+= Installation
+pyDHTMLParser is hosted at [[https://pypi.python.org/pypi/pyDHTMLParser|pypi]], so you 
+can install it using {{{pip}}}:
+
+{{{
+pip install pyDHTMLParser
+}}}
 
 = What is it?
 DHTMLParser is a lightweight parser created for one purpose - quick and easy picking
