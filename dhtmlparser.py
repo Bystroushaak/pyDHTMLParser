@@ -737,6 +737,7 @@ def __raw_split(itxt):
 	array = []
 	next_state = 0
 	inside_tag = False
+	escaped = False
 
 	for c in itxt:
 		if next_state == 0:  # content
@@ -767,9 +768,10 @@ def __raw_split(itxt):
 					inside_tag = True
 				content += c
 		elif next_state == 2:  # "" / ''
-			if c == echr and (buff[0] != "\\" or (buff[0] == "\\" and buff[1] == "\\")):
+			if c == echr and not escaped:
 				next_state = 1
 			content += c
+			escaped = not escaped if c == "\\" else False
 		elif next_state == 3:  # html comments
 			if c == ">" and buff[0] == "-" and buff[1] == "-":
 				if inside_tag:
