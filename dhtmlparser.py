@@ -113,7 +113,7 @@ class HTMLElement():
 		     (isinstance(third, list) or isinstance(third, tuple)) and \
 		     len(third) > 0 and isinstance(third[0], HTMLElement):
 
-			# containers with childs are automatically considered tags
+			# containers with childs are automatically considered as tags
 			if tag.strip() != "":
 				if not tag.startswith("<"):
 					tag = "<" + tag
@@ -126,7 +126,7 @@ class HTMLElement():
 			 isinstance(second, tuple)) and len(second) > 0 and    \
 			 isinstance(second[0], HTMLElement):
 
-			# containers with childs are automatically considered tags
+			# containers with childs are automatically considered as tags
 			if tag.strip() != "":
 				if not tag.startswith("<"):
 					tag = "<" + tag
