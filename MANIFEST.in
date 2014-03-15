@@ -1,0 +1,2 @@
+include README.creole *.py
+recursive-include examples *
