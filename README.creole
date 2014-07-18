@@ -10,11 +10,11 @@ pip install pyDHTMLParser
 }}}
 
 = What is it?
-DHTMLParser is a lightweight parser created for one purpose - quick and easy picking
-of selected tags from DOM.
+DHTMLParser is a lightweight HTML/XML parser created for one purpose - quick and easy 
+picking selected tags from DOM.
 
-It can be very useful when you are writing your own API for a page, or a 
-checker or you just need to write quick and dirty web scraper.
+It can be very useful when you are in need to write own "guerilla" API for some webpage, or a 
+scrapper.
 
 If you want, you can also create HTML/XML documents more easily than by joining strings.
 
@@ -156,9 +156,9 @@ parameter set to {{{"xex"}}}:
 Or we want only {{{<element>}}} tags with {{{name="xex"}}} parameters:
 
 {{{
->>> dom.find("element", {"name":"xex"})
+>>> dom.find("element", {"name": "xex"})
 [<dhtmlparser.HTMLElement instance at 0x2403d88>]
->>> dom.find("element", {"NAME":"xex"})  # parameter names (not values!) are case insensitive
+>>> dom.find("element", {"NAME": "xex"})  # parameter names (not values!) are case insensitive
 [<dhtmlparser.HTMLElement instance at 0x2403d88>]
 }}}
 
@@ -295,8 +295,8 @@ If you want to create DOM from HTMLElements, you can use one of theese four cons
 {{{
 HTMLElement()
 HTMLElement("<tag>")
-HTMLElement("<tag>", {"param":"value"})
-HTMLElement("tag", {"param":"value"}, [HTMLElement("<tag1>"), ...])
+HTMLElement("<tag>", {"param": "value"})
+HTMLElement("tag", {"param": "value"}, [HTMLElement("<tag1>"), ...])
 }}}
 
 Tag or parameter specification parts can be omitted:
@@ -326,7 +326,6 @@ Usually, it is better to use {{{HTMLElement("")}}}.
 === Nonpair tag
 	
 {{{
-
 >>> e = HTMLElement("<br>")
 >>> e.isNonPairTag()
 True
@@ -336,7 +335,7 @@ False
 <br>
 }}}
 
-Notice, that closing tag is not created this way.
+Notice, that closing tag wasn't automatically created.
 
 === Pair tag
 
@@ -349,7 +348,7 @@ False
 >>> e.endtag = HTMLElement("</tag>")
 >>> e.isOpeningTag()
 True
->>> e.isOpeningTag()
+>>> e.isPairTag()
 True
 >>> print e
 <tag></tag>
@@ -362,7 +361,7 @@ In short:
 >>> e.endtag = HTMLElement("</tag>")
 }}}
 
-Or you can always use string parsing:
+Or you can always use string parser:
 
 {{{
 >>> e = d.parseString("<tag></tag>")
@@ -370,7 +369,7 @@ Or you can always use string parsing:
 <tag></tag>
 }}}
 
-But don't forget, that elements returned from parseString() are encapsulated in blank tag:
+But don't forget, that elements returned from parseString() are encapsulated in blank "root" tag:
 
 {{{
 >>> e = d.parseString("<tag></tag>")
@@ -386,13 +385,13 @@ But don't forget, that elements returned from parseString() are encapsulated in 
 
 === Tags with parameters
 
-Tag (with or without <>) can have dictionary parameters.
+Tag (with or without <>) can have as dictionary as second parameter.
 
 {{{
->>> e = HTMLElement("tag", {"param":"value"}) # without <>, because normal text can't have parameters
+>>> e = HTMLElement("tag", {"param":"value"})  # without <>, because normal text can't have parameters
 >>> print e
 <tag param="value">
->>> print e.params # parameters are accessed thru .params property
+>>> print e.params  # parameters are accessed thru .params property
 {'param': 'value'}
 }}}
 
@@ -418,7 +417,7 @@ But there is also easier way:
 or 
 
 {{{
->>> print HTMLElement("tag", {"some":"parameter"}, [HTMLElement("content")])
+>>> print HTMLElement("tag", {"some": "parameter"}, [HTMLElement("content")])
 <tag some="parameter">content</tag>
 }}}
 
