@@ -12,7 +12,7 @@ This work is licensed under a Creative Commons 3.0 Unported License
 Project page; https://github.com/Bystroushaak/pyDHTMLParser
 """
 # Imports =====================================================================
-from htmlelement import HTMLElement, rotate_buff
+from htmlelement import HTMLElement, rotate_buff, NONPAIR_TAGS
 
 
 # Functions ===================================================================

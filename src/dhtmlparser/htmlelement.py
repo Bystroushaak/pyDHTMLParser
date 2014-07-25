@@ -39,24 +39,25 @@ def closeElements(childs):
     for e in childs:
         if not e.isTag():
             o.append(e)
+            continue
+
+        if not e.isNonPairTag() and not e.isEndTag() and not e.isComment() \
+           and e.endtag is None:
+            e.childs = closeElements(e.childs)
+
+            o.append(e)
+            o.append(HTMLElement("</" + e.getTagName() + ">"))
+
+            # Join opener and endtag
+            e.endtag = o[-1]
+            o[-1].openertag = e
         else:
-            if not e.isNonPairTag() and not e.isEndTag() and not e.isComment()\
-               and e.endtag is None:
-                e.childs = closeElements(e.childs)
-
-                o.append(e)
-                o.append(HTMLElement("</" + e.getTagName() + ">"))
-
-                # Join opener and endtag
-                e.endtag = o[-1]
-                o[-1].openertag = e
-            else:
-                o.append(e)
+            o.append(e)
 
     return o
 
 
-class HTMLElement:
+class HTMLElement(object):
     """
     Container for parsed html elements.
     """
@@ -64,9 +65,9 @@ class HTMLElement:
         self.__element = None
         self.__tagname = ""
 
-        self.__istag        = False
-        self.__isendtag     = False
-        self.__iscomment    = False
+        self.__istag = False
+        self.__isendtag = False
+        self.__iscomment = False
         self.__isnonpairtag = False
 
         self.childs = []
@@ -83,7 +84,7 @@ class HTMLElement:
 
         elif type(tag) in [str, unicode] and type(second) == dict and \
              type(third) in [list, tuple] and len(third) > 0 and \
-             isinstance(third[0], HTMLElement):
+             all(map(lambda x: isinstance(x, HTMLElement), third)):
 
             # containers with childs are automatically considered as tags
             if tag.strip():
@@ -97,7 +98,7 @@ class HTMLElement:
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
         elif type(tag) in [str, unicode] and type(second) in [list, tuple] and \
-             len(second) > 0 and isinstance(second[0], HTMLElement):
+             second and all(map(lambda x: isinstance(x, HTMLElement), second)):
 
             # containers with childs are automatically considered as tags
             if tag.strip():
@@ -110,7 +111,8 @@ class HTMLElement:
             self.childs = closeElements(second)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
-        elif type(tag) in [list, tuple] and tag and type(tag[0]) == HTMLElement:
+        elif type(tag) in [list, tuple] and tag and \
+             all(map(lambda x: isinstance(x, HTMLElement), tag)):
             self.__init_tag("")
             self.childs = closeElements(tag)
 
@@ -406,7 +408,7 @@ class HTMLElement:
         """
         Return True if this is paired tag - <body> .. </body> for example.
         """
-        if self.isComment() or self.isNonPairTag:
+        if self.isComment() or self.isNonPairTag():
             return False
 
         if self.isEndTag():
@@ -454,14 +456,19 @@ class HTMLElement:
 
     def getContent(self):
         "Returns content of tag (everything between opener and endtag)."
-        output = ""
+        if not self.isTag() and self.__element:
+            return self.__element
 
+        if not self.childs:
+            return ""
+
+        output = ""
         for c in self.childs:
             if not c.isEndTag():
                 output += c.toString()
 
         if output.endswith("\n"):
-            output = output[:-1]
+            return output.rstrip()
 
         return output
 
@@ -559,7 +566,6 @@ class HTMLElement:
 
         Lambda function is same as in .find().
         """
-
         if isinstance(tag_name, HTMLElement):
             return self.isAlmostEqual(tag_name.getTagName(), self.params)
 
