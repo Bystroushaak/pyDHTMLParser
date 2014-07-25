@@ -103,29 +103,32 @@ class HTMLElement:
         self.openertag = None
 
         # blah, constructor overloading in python sux :P
-        if isinstance(tag, str) and second is None and third is None:
+        if type(tag) in [str, unicode] and not any([second, third]):
             self.__init_tag(tag)
-        elif isinstance(tag, str) and isinstance(second, dict) and third is None:
+
+        elif type(tag) in [str, unicode] and type(second) == dict and not third:
             self.__init_tag_params(tag, second)
-        elif isinstance(tag, str) and isinstance(second, dict) and     \
-             (isinstance(third, list) or isinstance(third, tuple)) and \
-             len(third) > 0 and isinstance(third[0], HTMLElement):
+
+        elif type(tag) in [str, unicode] and type(second) == dict and \
+             type(third) in [list, tuple] and len(third) > 0 and \
+             isinstance(third[0], HTMLElement):
 
             # containers with childs are automatically considered as tags
-            if tag.strip() != "":
+            if tag.strip():
                 if not tag.startswith("<"):
                     tag = "<" + tag
                 if not tag.endswith(">"):
                     tag += ">"
+
             self.__init_tag_params(tag, second)
             self.childs = closeElements(third)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
-        elif isinstance(tag, str) and (isinstance(second, list) or \
-             isinstance(second, tuple)) and len(second) > 0 and    \
-             isinstance(second[0], HTMLElement):
+
+        elif type(tag) in [str, unicode] and type(second) in [list, tuple] and \
+             len(second) > 0 and isinstance(second[0], HTMLElement):
 
             # containers with childs are automatically considered as tags
-            if tag.strip() != "":
+            if tag.strip():
                 if not tag.startswith("<"):
                     tag = "<" + tag
                 if not tag.endswith(">"):
@@ -134,35 +137,36 @@ class HTMLElement:
             self.__init_tag(tag)
             self.childs = closeElements(second)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
-        elif (isinstance(tag, list) or isinstance(tag, tuple)) and len(tag) > 0 \
-             and isinstance(tag[0], HTMLElement):
+
+        elif type(tag) in [list, tuple] and tag and type(tag[0]) == HTMLElement:
             self.__init_tag("")
             self.childs = closeElements(tag)
+
         else:
-            raise Exception("Oh no, not this crap!")
+            raise Exception("Unknown type '%s'!" % type(tag))
 
     #==========================================================================
     #= Constructor overloading ================================================
     #==========================================================================
     def __init_tag(self, tag):
-            self.__element = tag
+        self.__element = tag
 
-            self.__parseIsTag()
-            self.__parseIsComment()
+        self.__parseIsTag()
+        self.__parseIsComment()
 
-            if (not self.__istag) or self.__iscomment:
-                self.__tagname = self.__element
-            else:
-                self.__parseTagName()
+        if (not self.__istag) or self.__iscomment:
+            self.__tagname = self.__element
+        else:
+            self.__parseTagName()
 
-            if self.__iscomment or not self.__istag:
-                return
+        if self.__iscomment or not self.__istag:
+            return
 
-            self.__parseIsEndTag()
-            self.__parseIsNonPairTag()
+        self.__parseIsEndTag()
+        self.__parseIsNonPairTag()
 
-            if self.__istag and (not self.__isendtag) or "=" in self.__element:
-                self.__parseParams()
+        if self.__istag and (not self.__isendtag) or "=" in self.__element:
+            self.__parseParams()
 
     # used when HTMLElement(tag, params) is called - basically create string
     # from tagname and params
@@ -191,20 +195,20 @@ class HTMLElement:
         Same as findAll, but without endtags. You can always get them from
         .endtag property..
         """
-
-        dom = self.findAll(tag_name, params, fn, case_sensitive)
-
-        return filter(lambda x: not x.isEndTag(), dom)
+        return filter(
+            lambda x: not x.isEndTag(),
+            self.findAll(tag_name, params, fn, case_sensitive)
+        )
 
     def findB(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
         Same as findAllB, but without endtags. You can always get them from
         .endtag property..
         """
-
-        dom = self.findAllB(tag_name, params, fn, case_sensitive)
-
-        return filter(lambda x: not x.isEndTag(), dom)
+        return filter(
+            lambda x: not x.isEndTag(),
+            self.findAllB(tag_name, params, fn, case_sensitive)
+        )
 
     def findAll(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
@@ -285,10 +289,8 @@ class HTMLElement:
     #= Parsers ================================================================
     #==========================================================================
     def __parseIsTag(self):
-        if self.__element.startswith("<") and self.__element.endswith(">"):
-            self.__istag = True
-        else:
-            self.__istag = False
+        self.__istag = self.__element.startswith("<") and \
+                       self.__element.endswith(">")
 
     def __parseIsEndTag(self):
         last = ""
@@ -298,6 +300,7 @@ class HTMLElement:
             for c in self.__element:
                 if c == "/" and last == "<":
                     self.__isendtag = True
+
                 if ord(c) > 32:
                     last = c
 
@@ -311,6 +314,7 @@ class HTMLElement:
                 if c == ">" and last == "/":
                     self.__isnonpairtag = True
                     return
+
                 if ord(c) > 32:
                     last = c
 
@@ -319,14 +323,13 @@ class HTMLElement:
             self.__isnonpairtag = True
 
     def __parseIsComment(self):
-        if self.__element.startswith("<!--") and self.__element.endswith("-->"):
-            self.__iscomment = True
-        else:
-            self.__iscomment = False
+        self.__iscomment = self.__element.startswith("<!--") and \
+                           self.__element.endswith("-->")
 
     def __parseTagName(self):
         for el in self.__element.split(" "):
             el = el.replace("/", "").replace("<", "").replace(">", "")
+
             if len(el) > 0:
                 self.__tagname = el.rstrip()
                 return
@@ -356,6 +359,7 @@ class HTMLElement:
                         next_state = 1
                     else:
                         key += c
+
             elif next_state == 1:  # value decisioner
                 if c.strip() != "":  # skip whitespaces
                     if c == "'" or c == '"':
@@ -364,6 +368,7 @@ class HTMLElement:
                     else:
                         next_state = 2
                         value += c
+
             elif next_state == 2:  # one word parameter without quotes
                 if c.strip() == "":
                     next_state = 0
@@ -372,6 +377,7 @@ class HTMLElement:
                     value = ""
                 else:
                     value += c
+
             elif next_state == 3:  # quoted string
                 if c == end_quote and (buff[0] != "\\" or (buff[0]) == "\\" and buff[1] == "\\"):
                     next_state = 0
@@ -385,13 +391,13 @@ class HTMLElement:
             buff = rotate_buff(buff)
             buff[0] = c
 
-        if key != "":
-            if end_quote != "" and value.strip() != "":
+        if key:
+            if end_quote and value.strip():
                 self.params[key] = unescape(value, end_quote)
             else:
                 self.params[key] = value
 
-        if len(filter(lambda x: x == "/", self.params.keys())) > 0:
+        if filter(lambda x: x == "/", self.params.keys()):
             del self.params["/"]
             self.__isnonpairtag = True
 
@@ -434,7 +440,7 @@ class HTMLElement:
         if self.isEndTag():
             return True
 
-        if self.isOpeningTag() and self.endtag is not None:
+        if self.isOpeningTag() and self.endtag:
             return True
 
         return False
