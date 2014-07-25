@@ -88,7 +88,6 @@ class HTMLElement:
     """
     Container for parsed html elements.
     """
-
     def __init__(self, tag="", second=None, third=None):
         self.__element = None
         self.__tagname = ""
@@ -419,11 +418,11 @@ class HTMLElement:
         """
         if isnonpair is None:
             return self.__isnonpairtag
-        else:
-            self.__isnonpairtag = isnonpair
-            if not isnonpair:
-                self.endtag = None
-                self.childs = []
+
+        self.__isnonpairtag = isnonpair
+        if not isnonpair:
+            self.endtag = None
+            self.childs = []
 
     def isPairTag(self):
         """
@@ -431,8 +430,10 @@ class HTMLElement:
         """
         if self.isComment() or self.isNonPairTag:
             return False
+
         if self.isEndTag():
             return True
+
         if self.isOpeningTag() and self.endtag is not None:
             return True
 
@@ -447,30 +448,27 @@ class HTMLElement:
         if self.isTag() and (not self.isComment()) and (not self.isEndTag()) \
            and (not self.isNonPairTag()):
             return True
-        else:
-            return False
+
+        return False
 
     def isEndTagTo(self, opener):
         "Returns true, if this element is endtag to opener."
-        if self.__isendtag and opener.isOpeningTag():
-            if self.__tagname.lower() == opener.getTagName().lower():
-                return True
-            else:
-                return False
-        else:
+        if not (self.__isendtag and opener.isOpeningTag()):
             return False
+
+        return self.__tagname.lower() == opener.getTagName().lower()
 
     def tagToString(self):
         "Returns tag (with parameters), without content or endtag."
         if len(self.params) <= 0:
             return self.__element
-        else:
-            output = "<" + str(self.__tagname)
 
-            for key in self.params.keys():
-                output += " " + key + "=\"" + escape(self.params[key], '"') + "\""
+        output = "<" + str(self.__tagname)
 
-            return output + " />" if self.__isnonpairtag else output + ">"
+        for key in self.params.keys():
+            output += " " + key + "=\"" + escape(self.params[key], '"') + "\""
+
+        return output + " />" if self.__isnonpairtag else output + ">"
 
     def getTagName(self):
         "Returns tag name."
@@ -601,11 +599,13 @@ class HTMLElement:
             # compare parameters
             if params is None or len(params) == 0:
                 return True
-            elif len(self.params) > 0:
+
+            if len(self.params) > 0:
                 for key in params.keys():
                     if key not in self.params:
                         return False
-                    elif params[key] != self.params[key]:
+
+                    if params[key] != self.params[key]:
                         return False
 
                 return True
@@ -664,6 +664,7 @@ class HTMLElement:
         for e in self.childs:
             if e == child:
                 self.childs.remove(e)
+
             if end_tag_too and end_tag == e and end_tag is not None:
                 self.childs.remove(e)
             else:
@@ -679,7 +680,9 @@ def closeElements(childs):
 
     # Close all unclosed pair tags
     for e in childs:
-        if e.isTag():
+        if not e.isTag():
+            o.append(e)
+        else:
             if not e.isNonPairTag() and not e.isEndTag() and not e.isComment()\
                and e.endtag is None:
                 e.childs = closeElements(e.childs)
@@ -692,8 +695,6 @@ def closeElements(childs):
                 o[-1].openertag = e
             else:
                 o.append(e)
-        else:
-            o.append(e)
 
     return o
 
