@@ -4,7 +4,7 @@
 # Interpreter version: python 2.7
 #
 # Imports =====================================================================
-from dhtmlparser import escape, unescape
+from dhtmlparser.quoter import escape, unescape
 
 
 # Functions & objects =========================================================

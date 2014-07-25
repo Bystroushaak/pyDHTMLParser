@@ -7,10 +7,6 @@
 import dhtmlparser
 
 
-# Variables ===================================================================
-
-
-
 # Functions & objects =========================================================
 def test_remove_tags():
     dom = dhtmlparser.parseString("a<b>xax<i>xe</i>xi</b>d")
