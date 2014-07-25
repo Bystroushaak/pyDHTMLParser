@@ -80,7 +80,7 @@ def test_constructor_end_tag():
 
     assert e.isTag()
     assert e.isEndTag()
-    assert not e.isPairTag()
+    assert e.isPairTag()
     assert not e.isComment()
     assert not e.isOpeningTag()
     assert not e.isNonPairTag()
