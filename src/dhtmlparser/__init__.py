@@ -16,7 +16,7 @@ from htmlelement import HTMLElement, rotate_buff, NONPAIR_TAGS
 
 
 # Functions ===================================================================
-def __raw_split(itxt):
+def _raw_split(itxt):
     """
     Parse HTML from text into array filled with tags end text.
 
@@ -88,7 +88,7 @@ def __raw_split(itxt):
     return array
 
 
-def __repair_tags(raw_input):
+def _repair_tags(taglist):
     """
     Repair tags with comments (<HT<!-- asad -->ML> is parsed to
     ["<HT", "<!-- asad -->", "ML>"] and I need ["<HTML>", "<!-- asad -->"])
@@ -96,16 +96,22 @@ def __repair_tags(raw_input):
     ostack = []
 
     index = 0
-    while index < len(raw_input):
-        el = raw_input[index]
+    while index < len(taglist):
+        el = taglist[index]
 
         if el.isComment():
-            if index > 0 and index < len(raw_input) - 1:
-                if raw_input[index - 1].tagToString().startswith("<") and raw_input[index + 1].tagToString().endswith(">"):
-                    ostack[-1] = HTMLElement(ostack[-1].tagToString() + raw_input[index + 1].tagToString())
-                    ostack.append(el)
-                    index += 1
-                    continue
+            if not index > 0 and index < len(taglist) - 1:
+                continue
+
+            if taglist[index - 1].tagToString().startswith("<") and \
+               taglist[index + 1].tagToString().endswith(">"):
+                ostack[-1] = HTMLElement(
+                    ostack[-1].tagToString() +
+                    taglist[index + 1].tagToString()
+                )
+                ostack.append(el)
+                index += 1
+                continue
 
         ostack.append(el)
 
@@ -114,7 +120,7 @@ def __repair_tags(raw_input):
     return ostack
 
 
-def __indexOfEndTag(istack):
+def _indexOfEndTag(istack):
     """
     Go through istack and search endtag. Element at first index is considered
     as opening tag.
@@ -132,7 +138,8 @@ def __indexOfEndTag(istack):
 
     index = 0
     for el in istack[1:]:
-        if el.isOpeningTag() and (el.getTagName().lower() == opener.getTagName().lower()):
+        if el.isOpeningTag() and \
+           el.getTagName().lower() == opener.getTagName().lower():
             cnt += 1
         elif el.isEndTagTo(opener):
             if cnt == 0:
@@ -145,7 +152,7 @@ def __indexOfEndTag(istack):
     return 0
 
 
-def __parseDOM(istack):
+def _parseDOM(istack):
     "Recursively go through element array and create DOM."
     ostack = []
     end_tag_index = 0
@@ -154,13 +161,13 @@ def __parseDOM(istack):
     while index < len(istack):
         el = istack[index]
 
-        end_tag_index = __indexOfEndTag(istack[index:])  # Check if this is pair tag
+        end_tag_index = _indexOfEndTag(istack[index:])  # Check if this is pair tag
 
         if not el.isNonPairTag() and end_tag_index == 0 and not el.isEndTag():
             el.isNonPairTag(True)
 
         if end_tag_index != 0:
-            el.childs = __parseDOM(istack[index + 1: end_tag_index + index])
+            el.childs = _parseDOM(istack[index + 1: end_tag_index + index])
             el.endtag = istack[end_tag_index + index]  # Reference to endtag
             el.endtag.openertag = el
             ostack.append(el)
@@ -186,11 +193,11 @@ def parseString(txt):
     if len(txt) > 3 and txt.startswith("\xef\xbb\xbf"):
         txt = txt[3:]
 
-    for el in __raw_split(txt):
+    for el in _raw_split(txt):
         istack.append(HTMLElement(el))
 
     container = HTMLElement()
-    container.childs = __parseDOM(__repair_tags(istack))
+    container.childs = _parseDOM(_repair_tags(istack))
 
     return container
 
