@@ -23,16 +23,15 @@ NONPAIR_TAGS = [
 
 
 # Functions & objects =========================================================
-def rotate_buff(buff):
+def _rotate_buff(buff):
     """
     Rotate buffer (for each buff[i] = buff[i-1]).
     """
     return [buff[-1]] + buff[:-1]
 
 
-def closeElements(childs):
+def _closeElements(childs):
     "Close tags - used in some constructors"
-
     o = []
 
     # Close all unclosed pair tags
@@ -43,7 +42,7 @@ def closeElements(childs):
 
         if not e.isNonPairTag() and not e.isEndTag() and not e.isComment() \
            and e.endtag is None:
-            e.childs = closeElements(e.childs)
+            e.childs = _closeElements(e.childs)
 
             o.append(e)
             o.append(HTMLElement("</" + e.getTagName() + ">"))
@@ -94,7 +93,7 @@ class HTMLElement(object):
                     tag += ">"
 
             self.__init_tag_params(tag, second)
-            self.childs = closeElements(third)
+            self.childs = _closeElements(third)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
         elif type(tag) in [str, unicode] and type(second) in [list, tuple] and \
@@ -108,13 +107,13 @@ class HTMLElement(object):
                     tag += ">"
 
             self.__init_tag(tag)
-            self.childs = closeElements(second)
+            self.childs = _closeElements(second)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
         elif type(tag) in [list, tuple] and tag and \
              all(map(lambda x: isinstance(x, HTMLElement), tag)):
             self.__init_tag("")
-            self.childs = closeElements(tag)
+            self.childs = _closeElements(tag)
 
         else:
             raise Exception("Unknown type '%s'!" % type(tag))
@@ -345,7 +344,7 @@ class HTMLElement(object):
                 else:
                     value += c
 
-            buff = rotate_buff(buff)
+            buff = _rotate_buff(buff)
             buff[0] = c
 
         if key:

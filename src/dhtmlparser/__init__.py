@@ -12,7 +12,7 @@ This work is licensed under a Creative Commons 3.0 Unported License
 Project page; https://github.com/Bystroushaak/pyDHTMLParser
 """
 # Imports =====================================================================
-from htmlelement import HTMLElement, rotate_buff, NONPAIR_TAGS
+from htmlelement import HTMLElement, _rotate_buff, NONPAIR_TAGS
 
 
 # Functions ===================================================================
@@ -79,7 +79,7 @@ def _raw_split(itxt):
                 content += c
 
         # rotate buffer
-        buff = rotate_buff(buff)
+        buff = _rotate_buff(buff)
         buff[0] = c
 
     if len(content) > 0:
