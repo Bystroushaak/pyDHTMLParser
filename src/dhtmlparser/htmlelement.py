@@ -267,16 +267,7 @@ class HTMLElement(object):
                        self.__element.endswith(">")
 
     def __parseIsEndTag(self):
-        last = ""
-        self.__isendtag = False
-
-        if self.__element.startswith("<") and self.__element.endswith(">"):
-            for c in self.__element:
-                if c == "/" and last == "<":
-                    self.__isendtag = True
-
-                if ord(c) > 32:
-                    last = c
+        self.__isendtag = self.__element.startswith("</")
 
     def __parseIsNonPairTag(self):
         self.__isnonpairtag = False
@@ -421,8 +412,10 @@ class HTMLElement(object):
 
     def isOpeningTag(self):
         "True if is opening tag."
-        if self.isTag() and (not self.isComment()) and (not self.isEndTag()) \
-           and (not self.isNonPairTag()):
+        if self.isTag() and \
+           not self.isComment() and \
+           not self.isEndTag() and \
+           not self.isNonPairTag():
             return True
 
         return False
@@ -567,32 +560,37 @@ class HTMLElement(object):
         Lambda function is same as in .find().
         """
         if isinstance(tag_name, HTMLElement):
-            return self.isAlmostEqual(tag_name.getTagName(), self.params)
+            return self.isAlmostEqual(
+                tag_name.getTagName(),
+                tag_name.params if tag_name.params else None
+            )
 
         # search by lambda function
-        if fn is not None:
-            if fn(self):
-                return True
+        if fn and fn(self):
+            return True
 
         if not case_sensitive:
             self.__tagname = self.__tagname.lower()
             tag_name = tag_name.lower()
 
         # compare tagname
-        if self.__tagname == tag_name and self.__tagname != "" and self.__tagname is not None:
+        if self.__tagname and self.__tagname == tag_name:
             # compare parameters
-            if params is None or len(params) == 0:
+            if params == self.params:
                 return True
 
-            if len(self.params) > 0:
-                for key in params.keys():
-                    if key not in self.params:
-                        return False
-
-                    if params[key] != self.params[key]:
-                        return False
-
+            # None params = don't use parameters to compare equality
+            if params is None:
                 return True
+
+            for key in params.keys():
+                if key not in self.params:
+                    return False
+
+                if params[key] != self.params[key]:
+                    return False
+
+            return True
 
         return False
 
