@@ -216,7 +216,7 @@ class HTMLElement(object):
         for el in self.childs:
             tmp = el.findAll(tag_name, params, fn, case_sensitive)
 
-            if tmp is not None and len(tmp) > 0:
+            if tmp:
                 output.extend(tmp)
 
         return output
@@ -254,7 +254,7 @@ class HTMLElement(object):
             if el.isAlmostEqual(tag_name, params, fn, case_sensitive):
                 output.append(el)
 
-            if len(el.childs) > 0:
+            if el.childs:
                 breadth_search.extend(el.childs)
 
         return output
@@ -279,21 +279,13 @@ class HTMLElement(object):
                     last = c
 
     def __parseIsNonPairTag(self):
-        last = ""
         self.__isnonpairtag = False
 
-        # Tags endings with /> are nonpair - do not mind whitespaces (< 32)
-        if self.__element.startswith("<") and self.__element.endswith(">"):
-            for c in self.__element:
-                if c == ">" and last == "/":
-                    self.__isnonpairtag = True
-                    return
-
-                if ord(c) > 32:
-                    last = c
+        if self.__element.startswith("<") and self.__element.endswith("/>"):
+            self.__isnonpairtag = True
 
         # Check listed nonpair tags
-        if self.__tagname.lower() in NONPAIR_TAGS:
+        if self.__istag and self.__tagname.lower() in NONPAIR_TAGS:
             self.__isnonpairtag = True
 
     def __parseIsComment(self):
@@ -399,10 +391,14 @@ class HTMLElement(object):
         if isnonpair is None:
             return self.__isnonpairtag
 
-        self.__isnonpairtag = isnonpair
-        if not isnonpair:
+        if not self.__istag:
+            return
+
+        if isnonpair:
             self.endtag = None
             self.childs = []
+
+        self.__isnonpairtag = isnonpair
 
     def isPairTag(self):
         """
@@ -452,6 +448,9 @@ class HTMLElement(object):
 
     def getTagName(self):
         "Returns tag name."
+        if not self.__istag:
+            return self.__element
+
         return self.__tagname
 
     def getContent(self):
@@ -527,11 +526,6 @@ class HTMLElement(object):
 
         return output
 
-    #* /Getters ***************************************************************
-
-    #==========================================================================
-    #= Operators ==============================================================
-    #==========================================================================
     def toString(self, original=False):
         """
         Returns almost original string (use original = True if you want exact
@@ -544,7 +538,7 @@ class HTMLElement(object):
         """
         output = ""
 
-        if self.childs != [] or self.isOpeningTag():
+        if self.childs or self.isOpeningTag():
             output += self.__element if original else self.tagToString()
 
             for c in self.childs:
@@ -552,11 +546,17 @@ class HTMLElement(object):
 
             if self.endtag is not None:
                 output += self.endtag.tagToString()
+
         elif not self.isEndTag():
             output += self.tagToString()
 
         return output
 
+    #* /Getters ***************************************************************
+
+    #==========================================================================
+    #= Operators ==============================================================
+    #==========================================================================
     def __str__(self):
         return self.toString()
 
