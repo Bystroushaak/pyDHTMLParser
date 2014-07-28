@@ -25,13 +25,32 @@ NONPAIR_TAGS = [
 # Functions & objects =========================================================
 def _rotate_buff(buff):
     """
-    Rotate buffer (for each buff[i] = buff[i-1]).
+    Rotate buffer (for each ``buff[i] = buff[i-1]``).
+
+    Example:
+        assert _rotate_buff([1, 2, 3, 4]) == [4, 1, 2, 3]
+
+    Args:
+        buff (list): Buffer which will be rotated.
+
+    Returns:
+        list: Rotated buffer.
     """
     return [buff[-1]] + buff[:-1]
 
 
 def _closeElements(childs):
-    "Close tags - used in some constructors"
+    """
+    Create `endtags` to elements which looks like openers, but doesn't have
+    proper :attr:`HTMLElement.endtag`.
+
+    Args:
+        childs (list): List of childs (:class:`HTMLElement` obj) - typically
+               from :attr:`HTMLElement.childs` property.
+
+    Returns:
+        list: List of closed elements.
+    """
     o = []
 
     # Close all unclosed pair tags
@@ -58,7 +77,14 @@ def _closeElements(childs):
 
 class HTMLElement(object):
     """
-    Container for parsed html elements.
+    This class is used to represent single linked DOM (see 
+    :func:`.makeDoubleLinked` for double linked).
+
+    Attr:
+        childs (list): List of child nodes.
+        params (dict): :class:`.SpecialDict` instance holding tag parameters.
+        edntag (obj): Reference to the ending HTMLElement or None.
+        openertag (obj): Reference to the openning HTMLElement or None.
     """
     def __init__(self, tag="", second=None, third=None):
         self.__element = None
@@ -165,8 +191,21 @@ class HTMLElement(object):
 
     def find(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
-        Same as findAll, but without endtags. You can always get them from
-        .endtag property..
+        Same as :meth:`findAll`, but without `endtags`.
+
+        You can always get them from :attr:`endtag` property.
+
+        Args:
+            tag_name (str): Name of the tag you are looking for. Set to "" if
+                            you wish to use only `fn` parameter.
+            params (dict, default None): Parameters which have to be present
+                   in tag to be considered matching.
+            fn (function, default None): Use this function to match tags.
+               Function expects one parameter which is HTMLElement instance.
+            case_sensitive (bool, default False): Use case sensitive search.
+
+        Returns:
+            list: List of :class:`HTMLElement` instances matching your criteria.
         """
         return filter(
             lambda x: not x.isEndTag(),
