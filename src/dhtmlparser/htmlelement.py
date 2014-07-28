@@ -637,8 +637,12 @@ class HTMLElement(object):
             end_tag_too
                 remove end tag too - default true
         """
+        # if there are multiple childs, remove them
+        if type(child) in [list, tuple]:
+            map(lambda x: self.removeChild(x, end_tag_too), child)
+            return
 
-        if len(self.childs) <= 0:
+        if not self.childs:
             return
 
         end_tag = None
@@ -646,12 +650,13 @@ class HTMLElement(object):
             end_tag = child.endtag
 
         for e in self.childs:
-            if e == child:
-                self.childs.remove(e)
-
-            if end_tag_too and end_tag == e and end_tag is not None:
-                self.childs.remove(e)
-            else:
+            if e != child:
                 e.removeChild(child, end_tag_too)
+                continue
+
+            if end_tag_too and end_tag in self.childs:
+                self.childs.remove(end_tag)
+
+            self.childs.remove(e)
 
     #* /Setters ***************************************************************
