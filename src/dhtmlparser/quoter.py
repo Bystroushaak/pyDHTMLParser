@@ -8,6 +8,21 @@
 
 # Functions & objects =========================================================
 def unescape(inp, quote='"'):
+    """
+    Unescape `quote` in string `inp`.
+
+    Example::
+
+        >> unescape('hello \\"')
+        'hello "'
+
+    Args:
+        inp (str): String in which `quote` will be unescaped.
+        quote (char, default "): Specify which character will be unescaped.
+
+    Returns:
+        str: Unescaped string.
+    """
     if len(inp) < 2:
         return inp
 
@@ -27,10 +42,27 @@ def unescape(inp, quote='"'):
     return output
 
 
-def escape(input, quote='"'):
+def escape(inp, quote='"'):
+    """
+    Escape `quote` in string `inp`.
+
+    Example::
+
+        >>> escape('hello "')
+        'hello \\"'
+        >>> escape('hello \\"')
+        'hello \\\\"'
+
+    Args:
+        inp (str): String in which `quote` will be escaped.
+        quote (char, default "): Specify which character will be escaped.
+
+    Returns:
+        str: Escaped string.
+    """
     output = ""
 
-    for c in input:
+    for c in inp:
         if c == quote:
             output += '\\'
 
