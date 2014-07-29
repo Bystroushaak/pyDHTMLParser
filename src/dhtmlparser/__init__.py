@@ -12,6 +12,8 @@ This work is licensed under a Creative Commons 3.0 Unported License
 Project page; https://github.com/Bystroushaak/pyDHTMLParser
 """
 # Imports =====================================================================
+import specialdict
+import htmlelement
 from htmlelement import HTMLElement, _rotate_buff, NONPAIR_TAGS
 
 
@@ -32,45 +34,56 @@ def _raw_split(itxt):
     inside_tag = False
     escaped = False
 
+    COMMENT_START = ["-", "!", "<"]
+    COMMENT_END = ["-", "-"]
+
     for c in itxt:
-        if next_state == 0:  # content
+        if next_state == 0:    # content
             if c == "<":
-                if len(content) > 0:
+                if content:
                     array.append(content)
+
                 content = c
                 next_state = 1
                 inside_tag = False
+
             else:
                 content += c
+
         elif next_state == 1:  # html tag
             if c == ">":
                 array.append(content + c)
                 content = ""
                 next_state = 0
+
             elif c == "'" or c == '"':
                 echr = c
                 content += c
                 next_state = 2
-            elif c == "-" and buff[0] == "-" and buff[1] == "!" and buff[2] == "<":
-                if len(content[:-3]) > 0:
+
+            elif c == "-" and buff[:3] == COMMENT_START:
+                if content[:-3]:
                     array.append(content[:-3])
+
                 content = content[-3:] + c
                 next_state = 3
+
             else:
-                if c == "<":  # jump back into tag instead of content
+                if c == "<":   # jump back into tag instead of content
                     inside_tag = True
+
                 content += c
+
         elif next_state == 2:  # "" / ''
             if c == echr and not escaped:
                 next_state = 1
+
             content += c
             escaped = not escaped if c == "\\" else False
+
         elif next_state == 3:  # html comments
-            if c == ">" and buff[0] == "-" and buff[1] == "-":
-                if inside_tag:
-                    next_state = 1
-                else:
-                    next_state = 0
+            if c == ">" and buff[:2] == COMMENT_END:
+                next_state = 1 if inside_tag else 0
                 inside_tag = False
 
                 array.append(content + c)
@@ -82,7 +95,7 @@ def _raw_split(itxt):
         buff = _rotate_buff(buff)
         buff[0] = c
 
-    if len(content) > 0:
+    if content:
         array.append(content)
 
     return array
@@ -191,6 +204,13 @@ def parseString(txt, cip=True):
     if len(txt) > 3 and txt.startswith("\xef\xbb\xbf"):
         txt = txt[3:]
 
+    if not cip:
+        htmlelement.SpecialDict = []
+        reload(htmlelement)
+    elif htmlelement.SpecialDict == []:
+        htmlelement.SpecialDict = specialdict.SpecialDict
+        reload(htmlelement)
+
     container = HTMLElement()
     container.childs = _parseDOM(
         _repair_tags(
@@ -208,10 +228,9 @@ def makeDoubleLinked(dom, parent=None):
     """
     dom.parent = parent
 
-    if len(dom.childs) > 0:
-        for child in dom.childs:
-            child.parent = dom
-            makeDoubleLinked(child, dom)
+    for child in dom.childs:
+        child.parent = dom
+        makeDoubleLinked(child, dom)
 
 
 def removeTags(dom):
