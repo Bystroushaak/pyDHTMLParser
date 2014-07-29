@@ -4,6 +4,8 @@
 # Interpreter version: python 2.7
 #
 # Imports =====================================================================
+import pytest
+
 import dhtmlparser
 
 
@@ -102,19 +104,121 @@ def test_repair_tags_bad():
 
 
 def test_index_of_end_tag():
-    pass
+    tag_list = [
+        dhtmlparser.HTMLElement("<h1>"),
+        dhtmlparser.HTMLElement("<br />"),
+        dhtmlparser.HTMLElement("</h1>"),
+    ]
+
+    assert dhtmlparser._indexOfEndTag(tag_list) == 2
+    assert dhtmlparser._indexOfEndTag(tag_list[1:]) == 0
+    assert dhtmlparser._indexOfEndTag(tag_list[2:]) == 0
+
+    tag_list = [
+        dhtmlparser.HTMLElement("<h1>"),
+        dhtmlparser.HTMLElement("</h1>"),
+        dhtmlparser.HTMLElement("</h1>"),
+    ]
+
+    assert dhtmlparser._indexOfEndTag(tag_list) == 1
 
 
 def test_parse_dom():
-    pass
+    tag_list = [
+        dhtmlparser.HTMLElement("<h1>"),
+        dhtmlparser.HTMLElement("<xx>"),
+        dhtmlparser.HTMLElement("<xx>"),
+        dhtmlparser.HTMLElement("</h1>"),
+    ]
+
+    dom = dhtmlparser._parseDOM(tag_list)
+
+    assert len(dom) == 2
+    assert len(dom[0].childs) == 2
+    assert dom[0].childs[0].getTagName() == "xx"
+    assert dom[0].childs[1].getTagName() == "xx"
+    assert dom[0].childs[0].isNonPairTag()
+    assert dom[0].childs[1].isNonPairTag()
+
+    assert not dom[0].isNonPairTag()
+    assert not dom[1].isNonPairTag()
+
+    assert dom[0].isOpeningTag()
+    assert dom[1].isEndTag()
+
+    assert dom[0].endtag == dom[1]
+    assert dom[1].openertag == dom[0]
+
+    assert dom[1].isEndTagTo(dom[0])
 
 
 def test_parseString():
-    pass
+    dom = dhtmlparser.parseString(
+        """<html><tag PARAM="true"></html>"""
+    )
+
+    assert dom.childs
+    assert len(dom.childs) == 2
+
+    assert dom.childs[0].getTagName() == "html"
+    assert dom.childs[1].getTagName() == "html"
+
+    assert dom.childs[0].isOpeningTag()
+    assert dom.childs[1].isEndTag()
+
+    assert dom.childs[0].childs
+    assert not dom.childs[1].childs
+
+    assert dom.childs[0].childs[0].getTagName() == "tag"
+    assert dom.childs[0].childs[0].params
+    assert not dom.childs[0].childs[0].childs
+
+    assert "param" in dom.childs[0].childs[0].params
+    assert dom.childs[0].childs[0].params["param"] == "true"
+
+
+def test_parseString_cip():
+    dom = dhtmlparser.parseString(
+        """<html><tag PARAM="true"></html>""",
+        cip=False
+    )
+
+    assert dom.childs
+    assert len(dom.childs) == 2
+
+    assert dom.childs[0].getTagName() == "html"
+    assert dom.childs[1].getTagName() == "html"
+
+    assert dom.childs[0].isOpeningTag()
+    assert dom.childs[1].isEndTag()
+
+    assert dom.childs[0].childs
+    assert not dom.childs[1].childs
+
+    assert dom.childs[0].childs[0].getTagName() == "tag"
+    assert dom.childs[0].childs[0].params
+    assert not dom.childs[0].childs[0].childs
+
+    assert "param" not in dom.childs[0].childs[0].params
+    assert "PARAM" in dom.childs[0].childs[0].params
+
+    assert dom.childs[0].childs[0].params["PARAM"] == "true"
+
+    with pytest.raises(KeyError):
+        dom.childs[0].childs[0].params["param"]
 
 
 def test_makeDoubleLinked():
-    pass
+    dom = dhtmlparser.parseString(
+        """<html><tag PARAM="true"></html>"""
+    )
+
+    dhtmlparser.makeDoubleLinked(dom)
+
+    assert dom.childs[0].parent == dom
+    assert dom.childs[1].parent == dom
+
+    assert dom.childs[0].childs[0].parent == dom.childs[0]
 
 
 def test_remove_tags():
