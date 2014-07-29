@@ -148,6 +148,14 @@ class HTMLElement(object):
     #= Constructor overloading ================================================
     #==========================================================================
     def __init_tag(self, tag):
+        """
+        True constructor, which really initializes the :class:`HTMLElement`.
+
+        This is the function where all the preprocessing happens.
+
+        Args:
+            tag (str): HTML tag as string.
+        """
         self.__element = tag
 
         self.__parseIsTag()
@@ -167,9 +175,18 @@ class HTMLElement(object):
         if self.__istag and (not self.__isendtag) or "=" in self.__element:
             self.__parseParams()
 
-    # used when HTMLElement(tag, params) is called - basically create string
-    # from tagname and params
-    def __init_tag_params(self, tag, params):
+    def __init_tag_params(self, tag, params):  # TODO: refactor this out
+        """
+        Alternative constructor used when the tag parameters are added to the
+        HTMLElement (HTMLElement(tag, params)).
+
+        This method just creates string and then pass it to the
+        :meth:`__init_tag`.
+
+        Args:
+            tag (str): HTML tag as string.
+            params (dict): HTML tag parameters as dictionary.
+        """
         tag = tag.strip().replace(" ", "")
         nonpair = ""
 
@@ -194,6 +211,26 @@ class HTMLElement(object):
         Same as :meth:`findAll`, but without `endtags`.
 
         You can always get them from :attr:`endtag` property.
+        """
+        return filter(
+            lambda x: not x.isEndTag(),
+            self.findAll(tag_name, params, fn, case_sensitive)
+        )
+
+    def findB(self, tag_name, params=None, fn=None, case_sensitive=False):
+        """
+        Same as :meth:`findAllB`, but without `endtags`. You can always get them
+        from :attr:`endtag` property.
+        """
+        return filter(
+            lambda x: not x.isEndTag(),
+            self.findAllB(tag_name, params, fn, case_sensitive)
+        )
+
+    def findAll(self, tag_name, params=None, fn=None, case_sensitive=False):
+        """
+        Search for elements by their parameters using `Depth-first algorithm
+        <http://en.wikipedia.org/wiki/Depth-first_search>`_.
 
         Args:
             tag_name (str): Name of the tag you are looking for. Set to "" if
@@ -206,44 +243,6 @@ class HTMLElement(object):
 
         Returns:
             list: List of :class:`HTMLElement` instances matching your criteria.
-        """
-        return filter(
-            lambda x: not x.isEndTag(),
-            self.findAll(tag_name, params, fn, case_sensitive)
-        )
-
-    def findB(self, tag_name, params=None, fn=None, case_sensitive=False):
-        """
-        Same as findAllB, but without endtags. You can always get them from
-        .endtag property..
-        """
-        return filter(
-            lambda x: not x.isEndTag(),
-            self.findAllB(tag_name, params, fn, case_sensitive)
-        )
-
-    def findAll(self, tag_name, params=None, fn=None, case_sensitive=False):
-        """
-        Simple search engine using Depth-first algorithm
-        http://en.wikipedia.org/wiki/Depth-first_search.
-
-        Finds elements and subelements which match patterns given by 
-        parameters. Also allows search defined by user's lambda function.
-
-        @param tag_name: Name of tag.
-        @type tag_name: string
-
-        @param params: Parameters of arg.
-        @type params: dictionary
-
-        @param fn: User defined function for search.
-        @type fn: lambda function
-
-        @param case_sensitive: Search case sensitive. Default True.
-        @type case_sensitive: bool
-
-        @return: Matches.
-        @rtype: Array of HTMLElements
         """
         output = []
 
@@ -261,26 +260,20 @@ class HTMLElement(object):
 
     def findAllB(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
-        Simple search engine using Breadth-first algorithm
-        http://en.wikipedia.org/wiki/Breadth-first_search.
+        Simple search engine using `Breadth-first algorithm
+        <http://en.wikipedia.org/wiki/Breadth-first_search>`_.
 
-        Finds elements and subelements which match patterns given by
-        parameters and also allows search defined by users lambda function.
+        Args:
+            tag_name (str): Name of the tag you are looking for. Set to "" if
+                            you wish to use only `fn` parameter.
+            params (dict, default None): Parameters which have to be present
+                   in tag to be considered matching.
+            fn (function, default None): Use this function to match tags.
+               Function expects one parameter which is HTMLElement instance.
+            case_sensitive (bool, default False): Use case sensitive search.
 
-        @param tag_name: Name of tag.
-        @type tag_name: string
-
-        @param params: Parameters of arg.
-        @type params: dictionary
-
-        @param fn: User defined function for search.
-        @type fn: lambda function
-
-        @param case_sensitive: Search case sensitive. Default True.
-        @type case_sensitive: bool
-
-        @return: Matches.
-        @rtype: Array of HTMLElements
+        Returns:
+            list: List of :class:`HTMLElement` instances matching your criteria.
         """
         output = []
 
