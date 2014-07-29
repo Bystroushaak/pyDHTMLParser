@@ -182,22 +182,21 @@ def _parseDOM(istack):
     return ostack
 
 
-def parseString(txt):
+def parseString(txt, cip=True):
     """
     Parse given string and return DOM tree consisting of single linked
     HTMLElements.
     """
-    istack = []
-
     # remove UTF BOM (prettify fails if not)
     if len(txt) > 3 and txt.startswith("\xef\xbb\xbf"):
         txt = txt[3:]
 
-    for el in _raw_split(txt):
-        istack.append(HTMLElement(el))
-
     container = HTMLElement()
-    container.childs = _parseDOM(_repair_tags(istack))
+    container.childs = _parseDOM(
+        _repair_tags(
+            map(lambda x: HTMLElement(x), _raw_split(txt))
+        )
+    )
 
     return container
 

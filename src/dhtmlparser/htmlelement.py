@@ -77,7 +77,7 @@ def _closeElements(childs):
 
 class HTMLElement(object):
     """
-    This class is used to represent single linked DOM (see 
+    This class is used to represent single linked DOM (see
     :func:`.makeDoubleLinked` for double linked).
 
     Attr:
