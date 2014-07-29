@@ -507,7 +507,13 @@ class HTMLElement(object):
         return self.__iscomment
 
     def tagToString(self):
-        "Returns tag (with parameters), without content or endtag."
+        """
+        Get HTML element representation of the tag, but only the gag, not the
+        :attr:`childs` or :attr:`endtag`.
+
+        Returns:
+            str: HTML representation.
+        """
         if not self.params:
             return self.__element
 
@@ -518,15 +524,54 @@ class HTMLElement(object):
 
         return output + " />" if self.__isnonpairtag else output + ">"
 
+    def toString(self, original=False):
+        """
+        Returns almost original string (use `original` = True if you want exact
+        copy).
+
+        If you want prettified string, try :meth:`prettify`.
+
+        Args:
+            original (bool, default False): If True, return parsed element, so
+                     if you changed something in :attr:`params`, there will be
+                     no traces of those changes.
+
+        Returns:
+            str: Complete representation of the element with childs, endtag \
+                 and so on.
+        """
+        output = ""
+
+        if self.childs or self.isOpeningTag():
+            output += self.__element if original else self.tagToString()
+
+            for c in self.childs:
+                output += c.toString(original)
+
+            if self.endtag is not None:
+                output += self.endtag.tagToString()
+
+        elif not self.isEndTag():
+            output += self.tagToString()
+
+        return output
+
     def getTagName(self):
-        "Returns tag name."
+        """
+        Returns:
+            str: Tag name or while element in case of normal text \
+                 (``not isTag()``).
+        """
         if not self.__istag:
             return self.__element
 
         return self.__tagname
 
     def getContent(self):
-        "Returns content of tag (everything between opener and endtag)."
+        """
+        Returns:
+            str: Content of tag (everything between `opener` and `endtag`).
+        """
         if not self.isTag() and self.__element:
             return self.__element
 
@@ -543,8 +588,18 @@ class HTMLElement(object):
 
         return output
 
-    def prettify(self, depth=0, separator="  ", last=True, pre=False, inline=False):
-        "Returns prettifyied tag with content."
+    def prettify(self, depth=0, separator="  ", last=True, pre=False,
+                                                           inline=False):
+        """
+        Same as :meth:`toString`, but returns prettified element with content.
+
+        Note:
+            This method is partially broken, and can sometimes create unexpected
+            results.
+
+        Returns:
+            str: Prettified string.
+        """
         output = ""
 
         if self.getTagName() != "" and self.tagToString().strip() == "":
@@ -599,32 +654,6 @@ class HTMLElement(object):
 
         return output
 
-    def toString(self, original=False):
-        """
-        Returns almost original string (use original = True if you want exact
-        copy).
-
-        If you want prettified string, try .prettify()
-
-        If original == True, return parsed element, so if you changed something
-        in .params, there will be no traces of those changes.
-        """
-        output = ""
-
-        if self.childs or self.isOpeningTag():
-            output += self.__element if original else self.tagToString()
-
-            for c in self.childs:
-                output += c.toString(original)
-
-            if self.endtag is not None:
-                output += self.endtag.tagToString()
-
-        elif not self.isEndTag():
-            output += self.tagToString()
-
-        return output
-
     #* /Getters ***************************************************************
 
     #==========================================================================
@@ -633,11 +662,24 @@ class HTMLElement(object):
     def __str__(self):
         return self.toString()
 
-    def isAlmostEqual(self, tag_name, params=None, fn=None, case_sensitive=False):
+    def isAlmostEqual(self, tag_name, params=None, fn=None,
+                                                   case_sensitive=False):
         """
-        Compare element with given tagname, params and/or by lambda function.
+        Compare element with given `tag_name`, `params` and/or by lambda
+        function.
 
         Lambda function is same as in .find().
+
+        Args:
+            tag_name (str): Compare just name of the element.
+            params (dict, default None): Compare also parameters.
+            fn (function, default None): Function which will be used for
+                                         matching.
+            case_sensitive (default False): Use case sensitive matching of the
+                                            tag_name.
+
+        Returns:
+            bool: True if two elements are almost equal.
         """
         if isinstance(tag_name, HTMLElement):
             return self.isAlmostEqual(
@@ -681,8 +723,12 @@ class HTMLElement(object):
     #==========================================================================
     def replaceWith(self, el):
         """
-        Replace element. Useful when you don't want change all references to
-        object.
+        Replace value in this element with values from `el`.
+
+        This useful when you don't want change all references to object.
+
+        Args:
+            el (obj): :class:`HTMLElement` instance.
         """
         self.childs = el.childs
         self.params = el.params
@@ -699,21 +745,19 @@ class HTMLElement(object):
 
     def removeChild(self, child, end_tag_too=True):
         """
-        Remove subelement (child) specified by reference.
+        Remove subelement (`child`) specified by reference.
 
-        This can't be used for removing subelements by value! If you want do
-        such thing, do:
+        Note:
+            This can't be used for removing subelements by value! If you want
+            to do such thing, try::
 
-        ---
-        for e in dom.find("value"):
-            dom.removeChild(e)
-        ---
+                for e in dom.find("value"):
+                    dom.removeChild(e)
 
-        Params:
-            child
-                child which will be removed from dom (compared by reference)
-            end_tag_too
-                remove end tag too - default true
+        Args:
+            child (obj): :class:`HTMLElement` instance which will be removed
+                         from this element.
+            end_tag_too (bool, default True): Remove also `child` endtag.
         """
         # if there are multiple childs, remove them
         if type(child) in [list, tuple]:
