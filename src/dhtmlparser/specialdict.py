@@ -12,12 +12,15 @@ class SpecialDict(dict):
     This dictionary stores items case sensitive, but compare them case
     INsensitive.
     """
-    def __contains__(self, k):
-        for item in super(SpecialDict, self).keys():
-            if k.lower() == item.lower():
-                return True
+    def __contains__(self, key):
+        keys = super(SpecialDict, self).keys()
+        return key.lower() in set(map(lambda x: x.lower(), keys))
 
-    def __getitem__(self, k):
+    def __getitem__(self, key):
+        key = key.lower()
+
         for item in self.keys():
-            if k.lower() == item.lower():
+            if key == item.lower():
                 return super(SpecialDict, self).__getitem__(item)
+
+        raise KeyError("Can't find key '%s'!" % key)
