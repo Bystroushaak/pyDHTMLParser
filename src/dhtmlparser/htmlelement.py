@@ -53,7 +53,7 @@ def _closeElements(childs):
     """
     o = []
 
-    # Close all unclosed pair tags
+    # close all unclosed pair tags
     for e in childs:
         if not e.isTag():
             o.append(e)
@@ -66,7 +66,7 @@ def _closeElements(childs):
             o.append(e)
             o.append(HTMLElement("</" + e.getTagName() + ">"))
 
-            # Join opener and endtag
+            # join opener and endtag
             e.endtag = o[-1]
             o[-1].openertag = e
         else:
@@ -284,61 +284,91 @@ class HTMLElement(object):
     #= Parsers ================================================================
     #==========================================================================
     def __parseIsTag(self):
+        """
+        Detect whether the element is HTML tag or not.
+
+        Result is saved to the :attr:`__istag` property.
+        """
         self.__istag = self.__element.startswith("<") and \
                        self.__element.endswith(">")
 
     def __parseIsEndTag(self):
+        """
+        Detect whether the element is `endtag` or not.
+
+        Result is saved to the :attr:`__isendtag` property.
+        """
         self.__isendtag = self.__element.startswith("</")
 
     def __parseIsNonPairTag(self):
+        """
+        Detect whether the element is nonpair or not (ends with ``/>``).
+
+        Result is saved to the :attr:`__isnonpairtag` property.
+        """
         self.__isnonpairtag = False
 
         if self.__element.startswith("<") and self.__element.endswith("/>"):
             self.__isnonpairtag = True
 
-        # Check listed nonpair tags
+        # check listed nonpair tags
         if self.__istag and self.__tagname.lower() in NONPAIR_TAGS:
             self.__isnonpairtag = True
 
     def __parseIsComment(self):
+        """
+        Detect whether the element is HTML comment or not.
+
+        Result is saved to the :attr:`__iscomment` property.
+        """
         self.__iscomment = self.__element.startswith("<!--") and \
                            self.__element.endswith("-->")
 
     def __parseTagName(self):
-        for el in self.__element.split(" "):
+        """
+        Parse name of the tag.
+
+        Result is saved to the :attr:`__tagname` property.
+        """
+        for el in self.__element.split():
             el = el.replace("/", "").replace("<", "").replace(">", "")
 
-            if len(el) > 0:
+            if el.strip():
                 self.__tagname = el.rstrip()
                 return
 
     def __parseParams(self):
+        """
+        Parse parameters from their string HTML representation to dictionary.
+
+        Result is saved to the :attr:`params` property.
+        """
         # check if there are any parameters
         if " " not in self.__element or "=" not in self.__element:
             return
 
-        # Remove '<' & '>'
+        # remove '<' & '>'
         params = self.__element.strip()[1:-1].strip()
-        # Remove tagname
+        # remove tagname
         params = params[
             params.find(self.getTagName()) + len(self.getTagName()):
         ].strip()
 
-        # Parser machine
+        # parser machine
         next_state = 0
         key = ""
         value = ""
         end_quote = ""
         buff = ["", ""]
         for c in params:
-            if next_state == 0:  # key
-                if c.strip() != "":  # safer than list space, tab and all possible whitespaces in UTF
-                    if c == "=":
+            if next_state == 0:      # key
+                if c.strip() != "":  # safer than list space, tab and all
+                    if c == "=":     # possible whitespaces in UTF
                         next_state = 1
                     else:
                         key += c
 
-            elif next_state == 1:  # value decisioner
+            elif next_state == 1:    # value decisioner
                 if c.strip() != "":  # skip whitespaces
                     if c == "'" or c == '"':
                         next_state = 3
@@ -347,7 +377,7 @@ class HTMLElement(object):
                         next_state = 2
                         value += c
 
-            elif next_state == 2:  # one word parameter without quotes
+            elif next_state == 2:    # one word parameter without quotes
                 if c.strip() == "":
                     next_state = 0
                     self.params[key] = value
@@ -356,7 +386,7 @@ class HTMLElement(object):
                 else:
                     value += c
 
-            elif next_state == 3:  # quoted string
+            elif next_state == 3:    # quoted string
                 if c == end_quote and (buff[0] != "\\" or (buff[0]) == "\\" and buff[1] == "\\"):
                     next_state = 0
                     self.params[key] = unescape(value, end_quote)
@@ -385,20 +415,33 @@ class HTMLElement(object):
     #= Getters ================================================================
     #==========================================================================
     def isTag(self):
-        "True if element is tag (not content)."
+        """
+        Returns:
+            bool: True if the element is considered to be HTML tag.
+        """
         return self.__istag
 
     def isEndTag(self):
-        "True if HTMLElement is end tag (/tag)."
+        """
+        Returns:
+            bool: True if the element is end tag (``</endtag>``).
+        """
         return self.__isendtag
 
     def isNonPairTag(self, isnonpair=None):
         """
-        Returns True if HTMLElement is listed nonpair tag table (br for
-        example) or if it ends with / - <br /> for example.
+        True if element is listed in nonpair tag table (``br`` for example) or
+        if it ends with ``/>`` - ``<br />`` for example.
 
         You can also change state from pair to nonpair if you use this as
         setter.
+
+        Args:
+            isnonpair (bool, default None): If set, internal nonpair state is
+                      changed.
+
+        Returns:
+            book: True if tag is nonpair.
         """
         if isnonpair is None:
             return self.__isnonpairtag
@@ -414,7 +457,8 @@ class HTMLElement(object):
 
     def isPairTag(self):
         """
-        Return True if this is paired tag - <body> .. </body> for example.
+        Returns:
+            bool: True if this is pair tag - ``<body> .. </body>`` for example.
         """
         if self.isComment() or self.isNonPairTag():
             return False
@@ -427,12 +471,13 @@ class HTMLElement(object):
 
         return False
 
-    def isComment(self):
-        "True if HTMLElement is html comment."
-        return self.__iscomment
-
     def isOpeningTag(self):
-        "True if is opening tag."
+        """
+        Detect whether this tag is opening or not.
+
+        Returns:
+            bool: True if it is opening.
+        """
         if self.isTag() and \
            not self.isComment() and \
            not self.isEndTag() and \
@@ -442,11 +487,24 @@ class HTMLElement(object):
         return False
 
     def isEndTagTo(self, opener):
-        "Returns true, if this element is endtag to opener."
+        """
+        Args:
+            opener (obj): :class:`HTMLElement` instance.
+
+        Returns:
+            bool: True, if this element is endtag to `opener`.
+        """
         if not (self.__isendtag and opener.isOpeningTag()):
             return False
 
         return self.__tagname.lower() == opener.getTagName().lower()
+
+    def isComment(self):
+        """
+        Returns:
+            bool: True if this element is encapsulating HTML comment.
+        """
+        return self.__iscomment
 
     def tagToString(self):
         "Returns tag (with parameters), without content or endtag."
@@ -455,7 +513,7 @@ class HTMLElement(object):
 
         output = "<" + str(self.__tagname)
 
-        for key in self.params.keys():
+        for key in self.params:
             output += " " + key + "=\"" + escape(self.params[key], '"') + "\""
 
         return output + " />" if self.__isnonpairtag else output + ">"
@@ -503,8 +561,9 @@ class HTMLElement(object):
 
         output += self.tagToString()
 
-        # detect if inline
-        is_inline = inline  # is_inline shows if inline was set by detection, or as parameter
+        # detect if inline - is_inline shows if inline was set by detection, or
+        # as parameter
+        is_inline = inline
         for c in self.childs:
             if not (c.isTag() or c.isComment()):
                 if len(c.tagToString().strip()) != 0:
