@@ -22,9 +22,20 @@ def _raw_split(itxt):
     """
     Parse HTML from text into array filled with tags end text.
 
-    Source code is little bit unintutive, because it is simple parser machine.
-    For better understanding, look at;
-    http://kitakitsune.org/images/field_parser.png
+    Source code is little bit unintutive, because it is state machine parser.
+
+    For better understanding, look at http://bit.ly/1rXRcJj
+
+    Example::
+
+        >>> dhtmlparser._raw_split('<html><tag params="true"></html>')
+        ['<html>', '<tag params="true">', '</html>']
+
+    Args:
+        itxt (str): Input HTML text, which will be parsed.
+
+    Returns:
+        list: List of strings (input splitted to tags and text).
     """
     echr = ""
     buff = ["", "", "", ""]
@@ -103,8 +114,16 @@ def _raw_split(itxt):
 
 def _repair_tags(taglist):
     """
-    Repair tags with comments (<HT<!-- asad -->ML> is parsed to
-    ["<HT", "<!-- asad -->", "ML>"] and I need ["<HTML>", "<!-- asad -->"])
+    Repair tags with comments.
+
+    ``<HT<!-- asad -->ML>`` is parsed to ``["<HT", "<!-- asad -->", "ML>"]``
+    and I need ``["<HTML>", "<!-- asad -->"]``).
+
+    Args:
+        taglist (list): List of :class:`.HTMLElement` objects.
+
+    Returns:
+        list: List of repaired :class:`.HTMLElement` objects.
     """
     ostack = []
 
@@ -116,18 +135,18 @@ def _repair_tags(taglist):
             if not index > 0 and index < len(taglist) - 1:
                 continue
 
-            if taglist[index - 1].tagToString().startswith("<") and \
-               taglist[index + 1].tagToString().endswith(">"):
-                ostack[-1] = HTMLElement(
-                    ostack[-1].tagToString() +
-                    taglist[index + 1].tagToString()
-                )
+            prev_tag = taglist[index - 1].tagToString()
+            next_tag = taglist[index + 1].tagToString()
+
+            if prev_tag.startswith("<") and next_tag.endswith(">"):
+                ostack[-1] = HTMLElement(prev_tag + next_tag)
                 ostack.append(el)
-                index += 1
+
+                # skip next (it is already added)
+                index += 2
                 continue
 
         ostack.append(el)
-
         index += 1
 
     return ostack
