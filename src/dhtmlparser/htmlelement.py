@@ -175,7 +175,7 @@ class HTMLElement(object):
         if self.__istag and (not self.__isendtag) or "=" in self.__element:
             self.__parseParams()
 
-    def __init_tag_params(self, tag, params):  # TODO: refactor this out
+    def __init_tag_params(self, tag, params):
         """
         Alternative constructor used when the tag parameters are added to the
         HTMLElement (HTMLElement(tag, params)).
@@ -187,24 +187,14 @@ class HTMLElement(object):
             tag (str): HTML tag as string.
             params (dict): HTML tag parameters as dictionary.
         """
-        tag = tag.strip().replace(" ", "")
-        nonpair = ""
+        self.__element = tag
+        self.params = params
+        self.__parseTagName()
+        self.__istag = True
+        self.__isendtag = False
+        self.__isnonpairtag = False
 
-        if tag.startswith("<"):
-            tag = tag[1:]
-
-        if tag.endswith("/>"):
-            tag = tag[:-2]
-            nonpair = " /"
-        elif tag.endswith(">"):
-            tag = tag[:-1]
-
-        output = "<" + tag
-
-        for key in params.keys():
-            output += " " + key + '="' + escape(params[key], '"') + '"'
-
-        self.__init_tag(output + nonpair + ">")
+        self.__element = self.tagToString()
 
     def find(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
@@ -460,7 +450,7 @@ class HTMLElement(object):
 
     def tagToString(self):
         "Returns tag (with parameters), without content or endtag."
-        if len(self.params) <= 0:
+        if not self.params:
             return self.__element
 
         output = "<" + str(self.__tagname)
