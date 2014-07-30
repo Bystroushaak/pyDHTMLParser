@@ -47,3 +47,52 @@ def test_findB():
 
     assert dom.find("div")[1].getContent().strip() == "Subdiv in first div."
     assert dom.findB("div")[1].getContent().strip() == "Second."
+
+
+def test_wfind():
+    dom = dhtmlparser.parseString("""
+        <div id=first>
+            First div.
+            <div id=first.subdiv>
+                Subdiv in first div.
+            </div>
+        </div>
+        <div id=second>
+            Second.
+        </div>
+    """)
+
+    div = dom.wfind("div").wfind("div")
+
+    assert div.childs
+    assert div.childs[0].params["id"] == "first.subdiv"
+
+
+def test_wfind_complicated():
+    dom = dhtmlparser.parseString("""
+        <root>
+            <some>
+                <something>
+                    <xe id="wanted xe" />
+                </something>
+                <something>
+                    asd
+
+                </something>
+                <xe id="another xe" />
+            </some>
+            <some>
+                else
+                <xe id="yet another xe" />
+            </some>
+        </root>
+    """)
+
+    xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
+
+    assert xe
+    assert xe[0].params["id"] == "wanted xe"
+
+    unicorn = dom.wfind("root").wfind("pink").wfind("unicorn")
+
+    assert not unicorn.childs
