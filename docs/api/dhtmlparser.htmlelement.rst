@@ -1,5 +1,5 @@
-dhtmlparser.htmlelement module
-==============================
+HTMLElement class
+=================
 
 .. automodule:: dhtmlparser.htmlelement
     :members:

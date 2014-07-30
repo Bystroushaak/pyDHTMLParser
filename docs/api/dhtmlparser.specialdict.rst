@@ -1,5 +1,5 @@
-dhtmlparser.specialdict module
-==============================
+SpecialDict class
+=================
 
 .. automodule:: dhtmlparser.specialdict
     :members:

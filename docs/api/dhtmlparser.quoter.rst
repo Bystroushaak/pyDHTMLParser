@@ -1,5 +1,5 @@
-dhtmlparser.quoter module
-=========================
+Quoter submodule
+================
 
 .. automodule:: dhtmlparser.quoter
     :members:
