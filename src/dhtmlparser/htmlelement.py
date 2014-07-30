@@ -282,6 +282,42 @@ class HTMLElement(object):
         return output
 
     def wfind(self, tag_name, params=None, fn=None, case_sensitive=False):
+        """
+        This methods works same as :meth:`find`, but only in one level of the
+        :attr:`childs`.
+
+        This allows to chain :meth:`wfind` calls::
+
+            >>> dom = dhtmlparser.parseString('''
+            ...           <root>
+            ...               <some>
+            ...                   <something>
+            ...                       <xe id="wanted xe" />
+            ...                   </something>
+            ...               </some>
+            ...           </root>
+            ...       ''')
+            >>> xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
+            >>> xe
+            [<dhtmlparser.htmlelement.HTMLElement object at 0x8a979ac>]
+            >>> str(xe[0])
+            '<xe id="wanted xe" />'
+
+        Args:
+            tag_name (str): Name of the tag you are looking for. Set to "" if
+                            you wish to use only `fn` parameter.
+            params (dict, default None): Parameters which have to be present
+                   in tag to be considered matching.
+            fn (function, default None): Use this function to match tags.
+               Function expects one parameter which is HTMLElement instance.
+            case_sensitive (bool, default False): Use case sensitive search.
+
+        Returns:
+            obj: Blank HTMLElement with all matches in :attr:`childs` property.
+
+        Note:
+            Returned element also have set :attr:`_container` property to True.
+        """
         childs = self.childs
         if self._container:  # container object
             childs = map(
@@ -291,10 +327,10 @@ class HTMLElement(object):
             childs = sum(childs, [])
 
         el = HTMLElement("")
+        el._container = True
         for child in childs:
             if child.isAlmostEqual(tag_name, params, fn, case_sensitive):
                 el.childs.append(child)
-        el._container = True
 
         return el
 
