@@ -1,2 +1,4 @@
-include README.creole *.py
+include README.creole run_tests.sh
 recursive-include examples *
+recursive-include tests *
+recursive-exclude tests/__pycache__ *

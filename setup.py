@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from distutils.core import setup
+from setuptools import setup, find_packages
 
 
 url = 'https://github.com/Bystroushaak/pyDHTMLParser'
@@ -7,7 +7,7 @@ url = 'https://github.com/Bystroushaak/pyDHTMLParser'
 
 setup(
     name         = 'pyDHTMLParser',
-    version      = '1.7.6',
+    version      = '2.0.0',
     py_modules   = ['dhtmlparser'],
 
     author       = 'Bystroushaak',
@@ -19,6 +19,10 @@ setup(
 
     long_description = """Documentation can be found in README.creole, or at
 project pages at github: """ + url,
+
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    include_package_data=True,
 
     classifiers=[
         "License :: Public Domain",
