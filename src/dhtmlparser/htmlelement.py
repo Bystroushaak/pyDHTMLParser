@@ -94,6 +94,7 @@ class HTMLElement(object):
         self.__isendtag = False
         self.__iscomment = False
         self.__isnonpairtag = False
+        self._container = False  # used by .wfind()
 
         self.childs = []
         self.params = SpecialDict()
@@ -279,6 +280,26 @@ class HTMLElement(object):
                 breadth_search.extend(el.childs)
 
         return output
+
+    def wfind(self, tag_name, params=None, fn=None, case_sensitive=False):
+        childs = self.childs
+        if self._container:  # container object
+            childs = map(
+                lambda x: x.childs,
+                filter(lambda x: x.childs, self.childs)
+            )
+            childs = sum(childs, [])
+
+        el = HTMLElement("")
+        for child in childs:
+            if child.isAlmostEqual(tag_name, params, fn, case_sensitive):
+                el.childs.append(child)
+        el._container = True
+
+        return el
+
+    # def match(self, tag_name, params=None, fn=None, case_sensitive=False):
+
 
     #==========================================================================
     #= Parsers ================================================================
