@@ -1,0 +1,2 @@
+sphinxcontrib-robotdoc>=0.3.4
+sphinxcontrib-napoleon>=0.2.5
