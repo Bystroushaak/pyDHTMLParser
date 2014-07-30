@@ -77,7 +77,6 @@ def test_wfind_complicated():
                 </something>
                 <something>
                     asd
-
                 </something>
                 <xe id="another xe" />
             </some>
@@ -90,9 +89,37 @@ def test_wfind_complicated():
 
     xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
 
-    assert xe
+    assert len(xe) == 1
     assert xe[0].params["id"] == "wanted xe"
 
     unicorn = dom.wfind("root").wfind("pink").wfind("unicorn")
 
     assert not unicorn.childs
+
+
+def test_wfind_multiple_matches():
+    dom = dhtmlparser.parseString("""
+        <root>
+            <some>
+                <something>
+                    <xe id="wanted xe" />
+                </something>
+                <something>
+                    <xe id="another wanted xe" />
+                </something>
+                <xe id="another xe" />
+            </some>
+            <some>
+                <something>
+                    <xe id="last wanted xe" />
+                </something>
+            </some>
+        </root>
+    """)
+
+    xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
+
+    assert len(xe) == 3
+    assert xe[0].params["id"] == "wanted xe"
+    assert xe[1].params["id"] == "another wanted xe"
+    assert xe[2].params["id"] == "last wanted xe"
