@@ -117,9 +117,66 @@ def test_wfind_multiple_matches():
         </root>
     """)
 
-    xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
+    xe = dom.wfind("root").wfind("some").wfind("something").wfind("xe")
 
+    assert len(xe.childs) == 3
+    assert xe.childs[0].params["id"] == "wanted xe"
+    assert xe.childs[1].params["id"] == "another wanted xe"
+    assert xe.childs[2].params["id"] == "last wanted xe"
+
+
+def test_match():
+    dom = dhtmlparser.parseString("""
+        <root>
+            <some>
+                <something>
+                    <xe id="wanted xe" />
+                </something>
+                <something>
+                    <xe id="another wanted xe" />
+                </something>
+                <xe id="another xe" />
+            </some>
+            <some>
+                <something>
+                    <xe id="last wanted xe" />
+                </something>
+            </some>
+        </root>
+    """)
+
+    xe = dom.match("root", "some", "something", "xe")
     assert len(xe) == 3
     assert xe[0].params["id"] == "wanted xe"
     assert xe[1].params["id"] == "another wanted xe"
     assert xe[2].params["id"] == "last wanted xe"
+
+def test_match_parameters():
+    dom = dhtmlparser.parseString("""
+        <root>
+            <div id="1">
+                <div id="5">
+                    <xe id="wanted xe" />
+                </div>
+                <div id="10">
+                    <xe id="another wanted xe" />
+                </div>
+                <xe id="another xe" />
+            </div>
+            <div id="2">
+                <div id="20">
+                    <xe id="last wanted xe" />
+                </div>
+            </div>
+        </root>
+    """)
+
+    xe = dom.match(
+        "root",
+        {"tag_name": "div", "params": {"id": "1"}},
+        ["div", {"id": "5"}],
+        "xe"
+    )
+
+    assert len(xe) == 1
+    assert xe[0].params["id"] == "wanted xe"
