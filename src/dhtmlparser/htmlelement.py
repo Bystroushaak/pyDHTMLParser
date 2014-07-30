@@ -289,14 +289,22 @@ class HTMLElement(object):
         This allows to chain :meth:`wfind` calls::
 
             >>> dom = dhtmlparser.parseString('''
-            ...           <root>
-            ...               <some>
-            ...                   <something>
-            ...                       <xe id="wanted xe" />
-            ...                   </something>
-            ...               </some>
-            ...           </root>
-            ...       ''')
+            ... <root>
+            ...     <some>
+            ...         <something>
+            ...             <xe id="wanted xe" />
+            ...         </something>
+            ...         <something>
+            ...             asd
+            ...         </something>
+            ...         <xe id="another xe" />
+            ...     </some>
+            ...     <some>
+            ...         else
+            ...         <xe id="yet another xe" />
+            ...     </some>
+            ... </root>
+            ... ''')
             >>> xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
             >>> xe
             [<dhtmlparser.htmlelement.HTMLElement object at 0x8a979ac>]
@@ -324,9 +332,9 @@ class HTMLElement(object):
                 lambda x: x.childs,
                 filter(lambda x: x.childs, self.childs)
             )
-            childs = sum(childs, [])
+            childs = sum(childs, [])  # flattern the list
 
-        el = HTMLElement("")
+        el = HTMLElement()
         el._container = True
         for child in childs:
             if child.isAlmostEqual(tag_name, params, fn, case_sensitive):
@@ -334,7 +342,85 @@ class HTMLElement(object):
 
         return el
 
-    # def match(self, tag_name, params=None, fn=None, case_sensitive=False):
+    def match(self, *args):
+        """
+        :meth:`wfind` is nice function, but still kinda long to use, because
+        you have to manually chain all calls together and in the end, you get
+        :class:`HTMLElement` instance container.
+
+        This function recursively calls :meth:`wfind` for you and in the end,
+        you get list of matching elements::
+
+            xe = dom.match("root", "some", "something", "xe")
+
+        is alternative to::
+
+            xe = dom.wfind("root").wfind("some").wfind("something").wfind("xe")
+
+        You can use all arguments used in :meth:`wfind`::
+
+            dom = dhtmlparser.parseString('''
+                <root>
+                    <div id="1">
+                        <div id="5">
+                            <xe id="wanted xe" />
+                        </div>
+                        <div id="10">
+                            <xe id="another wanted xe" />
+                        </div>
+                        <xe id="another xe" />
+                    </div>
+                    <div id="2">
+                        <div id="20">
+                            <xe id="last wanted xe" />
+                        </div>
+                    </div>
+                </root>
+            ''')
+
+            xe = dom.match(
+                "root",
+                {"tag_name": "div", "params": {"id": "1"}},
+                ["div", {"id": "5"}],
+                "xe"
+            )
+
+            assert len(xe) == 1
+            assert xe[0].params["id"] == "wanted xe"
+
+        Args:
+            *args: List of :meth:`wfind` parameters.
+
+        Returns:
+            list: List of matching elements (blank if no matchin element found).
+        """
+        if not args:
+            return self.childs
+
+        act = args[0]
+        args = args[1:]
+
+        result = None
+        if type(act) in [list, tuple]:
+            result = self.wfind(*act)
+        elif type(act) == dict:
+            result = self.wfind(**act)
+        elif type(act) in [str, unicode]:
+            result = self.wfind(act)
+        else:
+            raise KeyError(
+                "Unknown parameter type '%s': %s" % (type(act), act)
+            )
+
+        if not result.childs:
+            return []
+
+        match = result.match(*args)
+
+        if match:
+            return match
+
+        return []
 
 
     #==========================================================================
