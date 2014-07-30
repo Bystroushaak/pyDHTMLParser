@@ -337,6 +337,9 @@ class HTMLElement(object):
         el = HTMLElement()
         el._container = True
         for child in childs:
+            if child.isEndTag():
+                continue
+
             if child.isAlmostEqual(tag_name, params, fn, case_sensitive):
                 el.childs.append(child)
 
