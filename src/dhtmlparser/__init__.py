@@ -1,16 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-"""
-Author: Bystroushaak (bystrousak@kitakitsune.org)
-
-This version doens't corresponds with DHTMLParser v1.5.0 - there were updates,
-which makes both parsers incompatible.
-
-This work is licensed under a Creative Commons 3.0 Unported License
-(http://creativecommons.org/licenses/by/3.0/cz/).
-
-Project page; https://github.com/Bystroushaak/pyDHTMLParser
-"""
 # Imports =====================================================================
 import specialdict
 import htmlelement

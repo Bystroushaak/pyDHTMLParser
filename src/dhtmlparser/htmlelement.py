@@ -3,6 +3,9 @@
 #
 # Interpreter version: python 2.7
 #
+"""
+HTMLElement class used in DOM representation.
+"""
 # Imports =====================================================================
 from quoter import escape, unescape
 from specialdict import SpecialDict
@@ -20,6 +23,9 @@ NONPAIR_TAGS = [
     "frame",
     "base"
 ]
+"""
+List of non-pair tags. Set this to blank list, if you wish to parse XML.
+"""
 
 
 # Functions & objects =========================================================
@@ -80,11 +86,12 @@ class HTMLElement(object):
     This class is used to represent single linked DOM (see
     :func:`.makeDoubleLinked` for double linked).
 
-    Attr:
+    Attributes:
         childs (list): List of child nodes.
         params (dict): :class:`.SpecialDict` instance holding tag parameters.
-        edntag (obj): Reference to the ending HTMLElement or None.
-        openertag (obj): Reference to the openning HTMLElement or None.
+        endtag (obj): Reference to the ending :class:`HTMLElement` or ``None``.
+        openertag (obj): Reference to the openning :class:`HTMLElement` or
+                         ``None``.
     """
     def __init__(self, tag="", second=None, third=None):
         self.__element = None
@@ -210,8 +217,9 @@ class HTMLElement(object):
 
     def findB(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
-        Same as :meth:`findAllB`, but without `endtags`. You can always get them
-        from :attr:`endtag` property.
+        Same as :meth:`findAllB`, but without `endtags`.
+
+        You can always get them from :attr:`endtag` property.
         """
         return filter(
             lambda x: not x.isEndTag(),
@@ -577,7 +585,7 @@ class HTMLElement(object):
     def isNonPairTag(self, isnonpair=None):
         """
         True if element is listed in nonpair tag table (``br`` for example) or
-        if it ends with ``/>`` - ``<br />`` for example.
+        if it ends with ``/>`` (``<hr />`` for example).
 
         You can also change state from pair to nonpair if you use this as
         setter.

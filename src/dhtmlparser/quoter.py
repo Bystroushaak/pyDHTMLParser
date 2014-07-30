@@ -3,7 +3,10 @@
 #
 # Interpreter version: python 2.7
 #
-# Imports =====================================================================
+"""
+This module provides ability to quote and unquote strings using backslash
+notation.
+"""
 
 
 # Functions & objects =========================================================
@@ -11,7 +14,7 @@ def unescape(inp, quote='"'):
     """
     Unescape `quote` in string `inp`.
 
-    Example::
+    Example usage::
 
         >> unescape('hello \\"')
         'hello "'
@@ -46,7 +49,7 @@ def escape(inp, quote='"'):
     """
     Escape `quote` in string `inp`.
 
-    Example::
+    Example usage::
 
         >>> escape('hello "')
         'hello \\"'
