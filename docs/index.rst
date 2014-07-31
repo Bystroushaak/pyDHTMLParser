@@ -21,29 +21,42 @@ If you want, you can also create HTML/XML documents more easily than by joining 
 
 How it works?
 =============
-The module have just one important function - ``parseString(s)``. This function takes
-a string and returns a Document Object Model made of linked ``HTMLElement``
+The module have just one important function; :func:`.parseString`. This function takes
+a string and returns a Document Object Model made of linked :class:`.HTMLElement`
 objects (see bellow).
 
-When you call ``.parseString(s)``, the string argument is cut into pieces and
-then evaluated. Each piece is checked and if it looks like it could be HTML element, then
-it is put into ``HTMLElement`` object and proper variables are set (``self.__istag`` and so on). 
+When you call :func:`.parseString`, the string argument is cut into pieces and
+then evaluated. Each piece is checked and if it looks like it could be HTML
+element, then it is put into :class:`.HTMLElement` object and proper attributes
+are set (:attr:`.HTMLElement.__istag` and so on). 
 
-Every following element is put into ``.childs`` list of this element, until proper 
-closing element is found by simple stack mechanism.
+Every following element is put into :attr:`.HTMLElement.childs` list of this
+element, until proper closing element is found by simple stack mechanism.
 
-Elements with parameters are parsed and parameters are extracted into ``.params`` 
-property.
+Elements with parameters are parsed and parameters are extracted into
+:attr:`.HTMLElement.params` property.
 
 Result is array of single linked trees (you can make double linke by calling 
-``dhtmlparser.makeDoubleLinked(dom)``), which is then encapsulated in a blank 
-HTMLElement container, which holds the whole DOM in its ``.childs`` property.
+:func:`.makeDoubleLinked`), which is then encapsulated in a blank 
+:class:`.HTMLElement` container, which holds the whole DOM in its
+:attr:`.HTMLElement.childs` property.
 
-If you want to parse XML and don't want parser to guess nonpair tags from source,
-just set global module property ``NONPAIR_TAGS`` to blank list.
+This container can be then queried using :meth:`.HTMLElement.find`,
+:meth:`.HTMLElement.findB`, :meth:`.HTMLElement.wfind` and 
+:meth:`.HTMLElement.match` methods.
+
+XML
+---
+
+This module is intended mainly for parsing HTML. If you want to parse XML and
+you don't want parser to guess nonpair tags from source, just set global module
+property :attr:`~dhtmlparser.htmlelement.NONPAIR_TAGS` to blank list.
+
+There is also ``cip`` argument of :func:`.parseString` function, which makes
+parameters of the HTML/XML tags case sensitive.
 
 Package content
----------------
+===============
 
 .. toctree::
     :maxdepth: 1
@@ -71,73 +84,73 @@ Interactive example
 
 DOM tree now in memory looks like this::
 
-   dom == <    dhtmlparser.HTMLElement instance at 0x240b320>
+   dom == <dhtmlparser.HTMLElement instance at 0x240b320>
     |- .getTagName() == ""
     |- .isTag()      == False
     |- .params       == ""
     |- .openertag    == None
     |- .endtag       == None
     `- .childs       == [<dhtmlparser.HTMLElement instance at 0x2403b90>, <dhtmlparser.HTMLElement instance at 0x2403ab8>, <dhtmlparser.HTMLElement instance at 0x240b050>, <dhtmlparser.HTMLElement instance at 0x240b248>]
-       |
-       |- .childs[0]       == <dhtmlparser.HTMLElement instance at 0x2403b90>
-       |  |- .getTagName() == "\n"
-       |  |- .isTag()      == False
-       |  |- .params       == {}
-       |  |- .openertag    == None
-       |  |- .endtag       == None
-       |  `- .childs       == []
-       |
-       |- .childs[1]         == <dhtmlparser.HTMLElement instance at 0x2403ab8>
-       |  |- .getTagName()   == "root"
-       |  |- .isTag()        == True
-       |  |- .isEndTag()     == False
-       |  |- .isOpeningTag() == True
-       |  |- .params         == {}
-       |  |- .openertag      == None
-       |  |- .endtag         == <dhtmlparser.HTMLElement instance at 0x240b050>
-       |  `- .childs         == [<dhtmlparser.HTMLElement instance at 0x2403c68>, <dhtmlparser.HTMLElement instance at 0x2403d88>, <dhtmlparser.HTMLElement instance at 0x2403ea8>]
-       |     |
-       |     |- .childs[0]       == <dhtmlparser.HTMLElement instance at 0x2403c68>
-       |     |  |- .getTagName() == '\n '
-       |     |  |- .isTag()      == False
-       |     |  |- .params       == {}
-       |     |  |- .openertag    == None
-       |     |  |- .endtag       == None
-       |     |  `- .childs       == []
-       |     |
-       |     |- .childs[1]         == <dhtmlparser.HTMLElement instance at 0x2403d88>
-       |     |  |- .getTagName()   == 'element'
-       |     |  |- .isTag()        == True
-       |     |  |- .isNonPairTag() == True
-       |     |  |- .params         == {'name': 'xex'}
-       |     |  |- .openertag      == None
-       |     |  |- .endtag         == None
-       |     |  `- .childs         == []
-       |     |
-       |     `- .childs[2]       == <dhtmlparser.HTMLElement instance at 0x2403ea8>
-       |        |- .getTagName() == '\n'
-       |        |- .isTag()      == False
-       |        |- .params       == {}
-       |        |- .openertag    == None
-       |        |- .endtag       == None
-       |        `- .childs       == []
-       |
-       |- .childs[2]       == <dhtmlparser.HTMLElement instance at 0x240b050>
-       |  |- .getTagName() == 'root'
-       |  |- .isTag()      == True
-       |  |- .isEndTag()   == True
-       |  |- .params       == {}
-       |  |- .openertag    == <dhtmlparser.HTMLElement instance at 0x2403ab8>
-       |  |- .endtag       == None
-       |  `- .childs       == []
-       |
-       `- .childs[3]       == <dhtmlparser.HTMLElement instance at 0x240b248>
-          |- .getTagName() == '\n'
-          |- .isTag()      == False
-          |- .params       == {}
-          |- .openertag    == None
-          |- .endtag       == None
-          `- .childs       == []
+         |
+         |- .childs[0]       == <dhtmlparser.HTMLElement instance at 0x2403b90>
+         |  |- .getTagName() == "\n"
+         |  |- .isTag()      == False
+         |  |- .params       == {}
+         |  |- .openertag    == None
+         |  |- .endtag       == None
+         |  `- .childs       == []
+         |
+         |- .childs[1]         == <dhtmlparser.HTMLElement instance at 0x2403ab8>
+         |  |- .getTagName()   == "root"
+         |  |- .isTag()        == True
+         |  |- .isEndTag()     == False
+         |  |- .isOpeningTag() == True
+         |  |- .params         == {}
+         |  |- .openertag      == None
+         |  |- .endtag         == <dhtmlparser.HTMLElement instance at 0x240b050>
+         |  `- .childs         == [<dhtmlparser.HTMLElement instance at 0x2403c68>, <dhtmlparser.HTMLElement instance at 0x2403d88>, <dhtmlparser.HTMLElement instance at 0x2403ea8>]
+         |     |
+         |     |- .childs[0]       == <dhtmlparser.HTMLElement instance at 0x2403c68>
+         |     |  |- .getTagName() == '\n '
+         |     |  |- .isTag()      == False
+         |     |  |- .params       == {}
+         |     |  |- .openertag    == None
+         |     |  |- .endtag       == None
+         |     |  `- .childs       == []
+         |     |
+         |     |- .childs[1]         == <dhtmlparser.HTMLElement instance at 0x2403d88>
+         |     |  |- .getTagName()   == 'element'
+         |     |  |- .isTag()        == True
+         |     |  |- .isNonPairTag() == True
+         |     |  |- .params         == {'name': 'xex'}
+         |     |  |- .openertag      == None
+         |     |  |- .endtag         == None
+         |     |  `- .childs         == []
+         |     |
+         |     `- .childs[2]       == <dhtmlparser.HTMLElement instance at 0x2403ea8>
+         |        |- .getTagName() == '\n'
+         |        |- .isTag()      == False
+         |        |- .params       == {}
+         |        |- .openertag    == None
+         |        |- .endtag       == None
+         |        `- .childs       == []
+         |
+         |- .childs[2]       == <dhtmlparser.HTMLElement instance at 0x240b050>
+         |  |- .getTagName() == 'root'
+         |  |- .isTag()      == True
+         |  |- .isEndTag()   == True
+         |  |- .params       == {}
+         |  |- .openertag    == <dhtmlparser.HTMLElement instance at 0x2403ab8>
+         |  |- .endtag       == None
+         |  `- .childs       == []
+         |
+         `- .childs[3]       == <dhtmlparser.HTMLElement instance at 0x240b248>
+            |- .getTagName() == '\n'
+            |- .isTag()      == False
+            |- .params       == {}
+            |- .openertag    == None
+            |- .endtag       == None
+            `- .childs       == []
 
 In interactive shell, we can easily verify the tree::
 
@@ -148,14 +161,15 @@ In interactive shell, we can easily verify the tree::
 
 and so on..
 
-Now, let say, that you know there is HTML element named `element` and we want to 
-get it, but we don't know where it is. In that case ``.find()`` will help us::
+Now, let say, that you know there is HTML element named ``element`` and we want
+to get it, but we don't know where it is. In that case :meth:`.HTMLElement.find`
+will help us::
 
    >>> dom.find("element")
    [<dhtmlparser.HTMLElement instance at 0x2403d88>]
 
 Or when we don't know name of the element, but we know that he has ``"name"`` 
-parameter set to ``"xex"``::
+parameter (:attr:`.HTMLElement.params`) set to ``"xex"``::
 
    >>> dom.find("", fn = lambda x: "name" in x.params and x.params["name"] == "xex")
    [<dhtmlparser.HTMLElement instance at 0x2403d88>]
@@ -164,7 +178,7 @@ Or we want only ``<element>`` tags with ``name="xex"`` parameters::
 
    >>> dom.find("element", {"name": "xex"})
    [<dhtmlparser.HTMLElement instance at 0x2403d88>]
-   >>> dom.find("element", {"NAME": "xex"})  # parameter names (not values!) are case  insensitive
+   >>> dom.find("element", {"NAME": "xex"})  # parameter names (not values!) are case  insensitive by default
    [<dhtmlparser.HTMLElement instance at 0x2403d88>]
 
 Sources

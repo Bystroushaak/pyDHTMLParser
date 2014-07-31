@@ -4,7 +4,7 @@ HTMLElement class
 This class can be used for parsing or for creating DOM manually.
 
 DOM building
-============
+------------
 If you want to create DOM from HTMLElements, you can use one of theese four
 constructors::
 
@@ -23,10 +23,10 @@ Tag or parameter specification parts can be omitted::
 
 
 Examples
---------
+++++++++
 
 Blank element
-+++++++++++++
+^^^^^^^^^^^^^
 ::
 
    >>> from dhtmlparser import HTMLElement 
@@ -40,7 +40,7 @@ Blank element
 Usually, it is better to use ``HTMLElement("")``.
 
 Nonpair tag
-+++++++++++
+^^^^^^^^^^^
 ::
 
    >>> e = HTMLElement("<br>")
@@ -54,7 +54,7 @@ Nonpair tag
 Notice, that closing tag wasn't automatically created.
 
 Pair tag
-++++++++
+^^^^^^^^
 ::
 
    >>> e = HTMLElement("<tag>")
@@ -95,7 +95,7 @@ But don't forget, that elements returned from parseString() are encapsulated in 
    '</tag>
 
 Tags with parameters
-++++++++++++++++++++
+^^^^^^^^^^^^^^^^^^^^
 
 Tag (with or without <>) can have as dictionary as second parameter.
 
@@ -108,7 +108,7 @@ Tag (with or without <>) can have as dictionary as second parameter.
    {'param': 'value'}
 
 Tags with content
-+++++++++++++++++
+^^^^^^^^^^^^^^^^^
 
 You can create content manually::
 
@@ -129,7 +129,7 @@ or::
    <tag some="parameter">content</tag>
 
 HTMLElement class API
-=====================
+---------------------
 
 .. automodule:: dhtmlparser.htmlelement
     :members:

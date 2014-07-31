@@ -13,6 +13,7 @@ Submodules
 ----------
 
 .. toctree::
+   :maxdepth: 1
 
    dhtmlparser.htmlelement
    dhtmlparser.quoter
