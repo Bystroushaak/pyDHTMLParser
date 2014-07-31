@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.0.1
+-----
+    - Fixed bugs in .match().
+    - Fixed broken links in documentation.
+
 2.0.0
 -----
     - Rewritten, refactored, splitted to multiple files.
