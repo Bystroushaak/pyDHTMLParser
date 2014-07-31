@@ -180,3 +180,42 @@ def test_match_parameters():
 
     assert len(xe) == 1
     assert xe[0].params["id"] == "wanted xe"
+
+
+def test_match_parameters_relative_path():
+    dom = dhtmlparser.parseString("""
+        <root>
+            <div id="1">
+                <div id="5">
+                    <xe id="wanted xe" />
+                </div>
+                <div id="10">
+                    <xe id="another wanted xe" />
+                </div>
+                <xe id="another xe" />
+            </div>
+            <div id="2">
+                <div id="20">
+                    <xe id="last wanted xe" />
+                </div>
+            </div>
+        </root>
+    """)
+
+    xe = dom.match(
+        {"tag_name": "div", "params": {"id": "1"}},
+        ["div", {"id": "5"}],
+        "xe",
+    )
+
+    assert len(xe) == 1
+    assert xe[0].params["id"] == "wanted xe"
+
+    xe = dom.match(
+        {"tag_name": "div", "params": {"id": "1"}},
+        ["div", {"id": "5"}],
+        "xe",
+        absolute=True
+    )
+
+    assert not xe
