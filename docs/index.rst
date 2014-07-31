@@ -9,18 +9,38 @@ This version is actually much more advanced, D version is kinda unupdated.
 
 .. _DHTMLParser: https://github.com/Bystroushaak/DHTMLParser
 
-Sources
--------
-Source codes can be found at GitHub; https://github.com/Bystroushaak/pyDHTMLParser
+What is it?
+===========
+DHTMLParser is a lightweight HTML/XML parser created for one purpose - quick and easy 
+picking selected tags from DOM.
 
-Installation
-------------
-pyDHTMLParser is hosted at pypi_, so you can install it using pip::
+It can be very useful when you are in need to write own "guerilla" API for some webpage, or a 
+scrapper.
 
-    pip install pyDHTMLParser
+If you want, you can also create HTML/XML documents more easily than by joining strings.
 
-.. _pypi: https://pypi.python.org/pypi/pyDHTMLParser
+How it works?
+=============
+The module have just one important function - ``parseString(s)``. This function takes
+a string and returns a Document Object Model made of linked ``HTMLElement``
+objects (see bellow).
 
+When you call ``.parseString(s)``, the string argument is cut into pieces and
+then evaluated. Each piece is checked and if it looks like it could be HTML element, then
+it is put into ``HTMLElement`` object and proper variables are set (``self.__istag`` and so on). 
+
+Every following element is put into ``.childs`` list of this element, until proper 
+closing element is found by simple stack mechanism.
+
+Elements with parameters are parsed and parameters are extracted into ``.params`` 
+property.
+
+Result is array of single linked trees (you can make double linke by calling 
+``dhtmlparser.makeDoubleLinked(dom)``), which is then encapsulated in a blank 
+HTMLElement container, which holds the whole DOM in its ``.childs`` property.
+
+If you want to parse XML and don't want parser to guess nonpair tags from source,
+just set global module property ``NONPAIR_TAGS`` to blank list.
 
 Package content
 ---------------
@@ -32,6 +52,132 @@ Package content
     /api/dhtmlparser.htmlelement
     /api/dhtmlparser.quoter
     /api/dhtmlparser.specialdict
+
+Interactive example
+===================
+
+::
+
+    >>> import dhtmlparser as d
+    >>> dom = d.parseString("""
+    ... <root>
+    ...  <element name="xex" />
+    ... </root>
+    ... """)
+    >>> print dom
+    <dhtmlparser.HTMLElement instance at 0x240b320>
+    >>> dom.getTagName()  # blank, container element
+    ''
+
+DOM tree now in memory looks like this::
+
+   dom == <    dhtmlparser.HTMLElement instance at 0x240b320>
+    |- .getTagName() == ""
+    |- .isTag()      == False
+    |- .params       == ""
+    |- .openertag    == None
+    |- .endtag       == None
+    `- .childs       == [<dhtmlparser.HTMLElement instance at 0x2403b90>, <dhtmlparser.HTMLElement instance at 0x2403ab8>, <dhtmlparser.HTMLElement instance at 0x240b050>, <dhtmlparser.HTMLElement instance at 0x240b248>]
+       |
+       |- .childs[0]       == <dhtmlparser.HTMLElement instance at 0x2403b90>
+       |  |- .getTagName() == "\n"
+       |  |- .isTag()      == False
+       |  |- .params       == {}
+       |  |- .openertag    == None
+       |  |- .endtag       == None
+       |  `- .childs       == []
+       |
+       |- .childs[1]         == <dhtmlparser.HTMLElement instance at 0x2403ab8>
+       |  |- .getTagName()   == "root"
+       |  |- .isTag()        == True
+       |  |- .isEndTag()     == False
+       |  |- .isOpeningTag() == True
+       |  |- .params         == {}
+       |  |- .openertag      == None
+       |  |- .endtag         == <dhtmlparser.HTMLElement instance at 0x240b050>
+       |  `- .childs         == [<dhtmlparser.HTMLElement instance at 0x2403c68>, <dhtmlparser.HTMLElement instance at 0x2403d88>, <dhtmlparser.HTMLElement instance at 0x2403ea8>]
+       |     |
+       |     |- .childs[0]       == <dhtmlparser.HTMLElement instance at 0x2403c68>
+       |     |  |- .getTagName() == '\n '
+       |     |  |- .isTag()      == False
+       |     |  |- .params       == {}
+       |     |  |- .openertag    == None
+       |     |  |- .endtag       == None
+       |     |  `- .childs       == []
+       |     |
+       |     |- .childs[1]         == <dhtmlparser.HTMLElement instance at 0x2403d88>
+       |     |  |- .getTagName()   == 'element'
+       |     |  |- .isTag()        == True
+       |     |  |- .isNonPairTag() == True
+       |     |  |- .params         == {'name': 'xex'}
+       |     |  |- .openertag      == None
+       |     |  |- .endtag         == None
+       |     |  `- .childs         == []
+       |     |
+       |     `- .childs[2]       == <dhtmlparser.HTMLElement instance at 0x2403ea8>
+       |        |- .getTagName() == '\n'
+       |        |- .isTag()      == False
+       |        |- .params       == {}
+       |        |- .openertag    == None
+       |        |- .endtag       == None
+       |        `- .childs       == []
+       |
+       |- .childs[2]       == <dhtmlparser.HTMLElement instance at 0x240b050>
+       |  |- .getTagName() == 'root'
+       |  |- .isTag()      == True
+       |  |- .isEndTag()   == True
+       |  |- .params       == {}
+       |  |- .openertag    == <dhtmlparser.HTMLElement instance at 0x2403ab8>
+       |  |- .endtag       == None
+       |  `- .childs       == []
+       |
+       `- .childs[3]       == <dhtmlparser.HTMLElement instance at 0x240b248>
+          |- .getTagName() == '\n'
+          |- .isTag()      == False
+          |- .params       == {}
+          |- .openertag    == None
+          |- .endtag       == None
+          `- .childs       == []
+
+In interactive shell, we can easily verify the tree::
+
+   >>> dom.childs[1].getTagName()
+   'root'
+   >>> dom.childs[1].childs
+   [<dhtmlparser.HTMLElement instance at 0x2403c68>, <dhtmlparser.HTMLElement instance at 0x2403d88>, <dhtmlparser.HTMLElement instance at 0x2403ea8>]
+
+and so on..
+
+Now, let say, that you know there is HTML element named `element` and we want to 
+get it, but we don't know where it is. In that case ``.find()`` will help us::
+
+   >>> dom.find("element")
+   [<dhtmlparser.HTMLElement instance at 0x2403d88>]
+
+Or when we don't know name of the element, but we know that he has ``"name"`` 
+parameter set to ``"xex"``::
+
+   >>> dom.find("", fn = lambda x: "name" in x.params and x.params["name"] == "xex")
+   [<dhtmlparser.HTMLElement instance at 0x2403d88>]
+
+Or we want only ``<element>`` tags with ``name="xex"`` parameters::
+
+   >>> dom.find("element", {"name": "xex"})
+   [<dhtmlparser.HTMLElement instance at 0x2403d88>]
+   >>> dom.find("element", {"NAME": "xex"})  # parameter names (not values!) are case  insensitive
+   [<dhtmlparser.HTMLElement instance at 0x2403d88>]
+
+Sources
+-------
+Source codes can be found at GitHub; https://github.com/Bystroushaak/pyDHTMLParser
+
+Installation
+------------
+pyDHTMLParser is hosted at pypi_, so you can install it using pip::
+
+    pip install pyDHTMLParser
+
+.. _pypi: https://pypi.python.org/pypi/pyDHTMLParser
 
 Unittests
 ---------
@@ -54,6 +200,13 @@ which can be found at the root of the project::
     tests/test_specialdict.py .....
 
     ========================== 52 passed in 0.32 seconds ===========================
+
+Confused?
+=========
+If you don't understand how to use it, look at examples in ``./examples/``.
+   
+If you have questions, you can write me an email to: ``bystrousak````@kitakitsune.org``
+
 
 Indices and tables
 ==================
