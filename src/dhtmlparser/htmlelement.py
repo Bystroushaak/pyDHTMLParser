@@ -353,7 +353,7 @@ class HTMLElement(object):
 
         return el
 
-    def match(self, *args):
+    def match(self, *args, **kwargs):
         """
         :meth:`wfind` is nice function, but still kinda long to use, because
         you have to manually chain all calls together and in the end, you get
@@ -401,6 +401,12 @@ class HTMLElement(object):
 
         Args:
             *args: List of :meth:`wfind` parameters.
+            absolute (bool, default None): If true, first element will be
+                     searched from the root of the DOM. If None,
+                     :attr:`_container` attribute will be used to decide value
+                     of this argument. If False, :meth:`find` call will be run
+                     first to find first element, then :meth:`wfind` will be
+                     used to progress to next arguments.
 
         Returns:
             list: List of matching elements (blank if no matchin element found).
@@ -408,16 +414,37 @@ class HTMLElement(object):
         if not args:
             return self.childs
 
+        # pop one argument from argument stack (tuples, so .pop() won't work)
         act = args[0]
         args = args[1:]
 
+        # this is used to define relative/absolute root of the first element
+        def wrap_find(*args, **kwargs):
+            """
+            Find wrapper, to allow .wfind() to be substituted witřh .find()
+            call, which normally returns blank array instead of blank
+            `container` element.
+            """
+            el = HTMLElement()
+            el.childs = self.find(*args, **kwargs)
+            return el
+
+        # if absolute is not specified (ie - next recursive call), use
+        # self._container, which is set to True by .wfind(), so next search will
+        # be absolute from the given element
+        absolute = kwargs.get("absolute", None)
+        if absolute is None:
+            absolute = self._container
+
+        find_func = self.wfind if absolute else wrap_find
+
         result = None
         if type(act) in [list, tuple]:
-            result = self.wfind(*act)
+            result = find_func(*act)
         elif type(act) == dict:
-            result = self.wfind(**act)
+            result = find_func(**act)
         elif type(act) in [str, unicode]:
-            result = self.wfind(act)
+            result = find_func(act)
         else:
             raise KeyError(
                 "Unknown parameter type '%s': %s" % (type(act), act)
@@ -428,10 +455,9 @@ class HTMLElement(object):
 
         match = result.match(*args)
 
-        if match:
-            return match
-
-        return []
+        # just to be sure return always blank array, when the match is
+        # False/None and so on (it shouldn't be, but ..)
+        return match if match else []
 
 
     #==========================================================================
