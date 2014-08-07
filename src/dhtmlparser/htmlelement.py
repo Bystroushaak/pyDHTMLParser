@@ -868,8 +868,8 @@ class HTMLElement(object):
             )
 
         # search by lambda function
-        if fn and fn(self):
-            return True
+        if fn and not fn(self):
+            return False
 
         if not case_sensitive:
             self.__tagname = self.__tagname.lower()

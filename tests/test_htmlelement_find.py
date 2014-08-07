@@ -9,10 +9,12 @@ import dhtmlparser
 
 # Functions & objects =========================================================
 def test_find():
-    dom = dhtmlparser.parseString("""
+    dom = dhtmlparser.parseString(
+        """
         "<div ID='xa' a='b'>obsah xa divu</div> <!-- ID, not id :) -->
          <div id='xex' a='b'>obsah xex divu</div>
-    """)
+        """
+    )
 
     div_xe = dom.find("div", {"id": "xa"})  # notice the small `id`
     div_xex = dom.find("div", {"id": "xex"})
@@ -32,8 +34,9 @@ def test_find():
     assert div_xex.getTagName() == "div"
 
 
-def test_findB():
-    dom = dhtmlparser.parseString("""
+def test_find_fn():
+    dom = dhtmlparser.parseString(
+        """
         <div id=first>
             First div.
             <div id=first.subdiv>
@@ -43,14 +46,40 @@ def test_findB():
         <div id=second>
             Second.
         </div>
-    """)
+        """
+    )
+
+    div_tags = dom.find("div", fn=lambda x: x.params.get("id") == "first")
+
+    assert div_tags
+    assert len(div_tags) == 1
+
+    assert div_tags[0].params.get("id") == "first"
+    assert div_tags[0].getContent().strip().startswith("First div.")
+
+
+def test_findB():
+    dom = dhtmlparser.parseString(
+        """
+        <div id=first>
+            First div.
+            <div id=first.subdiv>
+                Subdiv in first div.
+            </div>
+        </div>
+        <div id=second>
+            Second.
+        </div>
+        """
+    )
 
     assert dom.find("div")[1].getContent().strip() == "Subdiv in first div."
     assert dom.findB("div")[1].getContent().strip() == "Second."
 
 
 def test_wfind():
-    dom = dhtmlparser.parseString("""
+    dom = dhtmlparser.parseString(
+        """
         <div id=first>
             First div.
             <div id=first.subdiv>
@@ -60,7 +89,8 @@ def test_wfind():
         <div id=second>
             Second.
         </div>
-    """)
+        """
+    )
 
     div = dom.wfind("div").wfind("div")
 
@@ -69,7 +99,8 @@ def test_wfind():
 
 
 def test_wfind_complicated():
-    dom = dhtmlparser.parseString("""
+    dom = dhtmlparser.parseString(
+        """
         <root>
             <some>
                 <something>
@@ -85,7 +116,8 @@ def test_wfind_complicated():
                 <xe id="yet another xe" />
             </some>
         </root>
-    """)
+        """
+    )
 
     xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
 
@@ -98,7 +130,8 @@ def test_wfind_complicated():
 
 
 def test_wfind_multiple_matches():
-    dom = dhtmlparser.parseString("""
+    dom = dhtmlparser.parseString(
+        """
         <root>
             <some>
                 <something>
@@ -115,7 +148,8 @@ def test_wfind_multiple_matches():
                 </something>
             </some>
         </root>
-    """)
+        """
+    )
 
     xe = dom.wfind("root").wfind("some").wfind("something").wfind("xe")
 
@@ -126,7 +160,8 @@ def test_wfind_multiple_matches():
 
 
 def test_match():
-    dom = dhtmlparser.parseString("""
+    dom = dhtmlparser.parseString(
+        """
         <root>
             <some>
                 <something>
@@ -143,7 +178,8 @@ def test_match():
                 </something>
             </some>
         </root>
-    """)
+        """
+    )
 
     xe = dom.match("root", "some", "something", "xe")
     assert len(xe) == 3
@@ -152,7 +188,8 @@ def test_match():
     assert xe[2].params["id"] == "last wanted xe"
 
 def test_match_parameters():
-    dom = dhtmlparser.parseString("""
+    dom = dhtmlparser.parseString(
+        """
         <root>
             <div id="1">
                 <div id="5">
@@ -169,7 +206,8 @@ def test_match_parameters():
                 </div>
             </div>
         </root>
-    """)
+        """
+    )
 
     xe = dom.match(
         "root",
@@ -183,7 +221,8 @@ def test_match_parameters():
 
 
 def test_match_parameters_relative_path():
-    dom = dhtmlparser.parseString("""
+    dom = dhtmlparser.parseString(
+        """
         <root>
             <div id="1">
                 <div id="5">
@@ -200,7 +239,8 @@ def test_match_parameters_relative_path():
                 </div>
             </div>
         </root>
-    """)
+        """
+    )
 
     xe = dom.match(
         {"tag_name": "div", "params": {"id": "1"}},
