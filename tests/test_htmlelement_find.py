@@ -58,6 +58,30 @@ def test_find_fn():
     assert div_tags[0].getContent().strip().startswith("First div.")
 
 
+def test_find_params():
+    dom = dhtmlparser.parseString(
+        """
+        <div id=first>
+            First div.
+            <div id=first.subdiv>
+                Subdiv in first div.
+            </div>
+        </div>
+        <div id=second>
+            Second.
+        </div>
+        """
+    )
+
+    div_tags = dom.find("", {"id": "first"})
+
+    assert div_tags
+    assert len(div_tags) == 1
+
+    assert div_tags[0].params.get("id") == "first"
+    assert div_tags[0].getContent().strip().startswith("First div.")
+
+
 def test_findB():
     dom = dhtmlparser.parseString(
         """

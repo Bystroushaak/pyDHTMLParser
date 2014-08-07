@@ -846,9 +846,9 @@ class HTMLElement(object):
                                                    case_sensitive=False):
         """
         Compare element with given `tag_name`, `params` and/or by lambda
-        function.
+        function `fn`.
 
-        Lambda function is same as in .find().
+        Lambda function is same as in :meth:`find`.
 
         Args:
             tag_name (str): Compare just name of the element.
@@ -856,7 +856,7 @@ class HTMLElement(object):
             fn (function, default None): Function which will be used for
                                          matching.
             case_sensitive (default False): Use case sensitive matching of the
-                                            tag_name.
+                                            `tag_name`.
 
         Returns:
             bool: True if two elements are almost equal.
@@ -876,25 +876,25 @@ class HTMLElement(object):
             tag_name = tag_name.lower()
 
         # compare tagname
-        if self.__tagname and self.__tagname == tag_name:
-            # compare parameters
-            if params == self.params:
-                return True
+        if tag_name and tag_name != self.__tagname:
+            return False
 
-            # None params = don't use parameters to compare equality
-            if params is None:
-                return True
-
-            for key in params.keys():
-                if key not in self.params:
-                    return False
-
-                if params[key] != self.params[key]:
-                    return False
-
+        # None params = don't use parameters to compare equality
+        if params is None:
             return True
 
-        return False
+        # compare parameters
+        if params == self.params:
+            return True
+
+        for key in params.keys():
+            if key not in self.params:
+                return False
+
+            if params[key] != self.params[key]:
+                return False
+
+        return True
 
     #* /Operators *************************************************************
 
