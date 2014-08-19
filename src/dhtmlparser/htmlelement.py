@@ -871,7 +871,7 @@ class HTMLElement(object):
         if fn and not fn(self):
             return False
 
-        if not case_sensitive:
+        if not case_sensitive and tag_name:
             self.__tagname = self.__tagname.lower()
             tag_name = tag_name.lower()
 
