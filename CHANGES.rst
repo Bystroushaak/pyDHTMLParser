@@ -1,13 +1,17 @@
 Changelog
 =========
 
+2.0.3
+-----
+    - ``.find()``; Fixed bug which prevented tag_name to be None.
+
 2.0.2
 -----
-    - Fixed bugs in .isAlmostEqual().
+    - Fixed bugs in ``.isAlmostEqual()``.
 
 2.0.1
 -----
-    - Fixed bugs in .match().
+    - Fixed bugs in ``.match()``.
     - Fixed broken links in documentation.
 
 2.0.0
