@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.4
+-----
+    - Added op ``.__eq__()`` to the `SpecialDict`.
+
 2.0.3
 -----
     - ``.find()``; Fixed bug which prevented tag_name to be None.

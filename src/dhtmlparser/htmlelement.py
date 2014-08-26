@@ -887,6 +887,7 @@ class HTMLElement(object):
         if params == self.params:
             return True
 
+        # test whether params dict is subset of self.params
         for key in params.keys():
             if key not in self.params:
                 return False
