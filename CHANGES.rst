@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.5
+-----
+    - Added new method ``.containsParamSubset()`` to ``HTMLElement``.
+
 2.0.4
 -----
     - Added op ``.__eq__()`` to the `SpecialDict`.

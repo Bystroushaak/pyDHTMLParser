@@ -100,3 +100,13 @@ def test_isNonPairTag_setter():
     div.isNonPairTag(True)
 
     assert div.toString() == '<div id="second" />'
+
+
+def test_containsParamSubset():
+    dom = dhtmlparser.parseString("<div id=x class=xex></div>")
+    div = dom.find("div")[0]
+
+    assert div.containsParamSubset({"id": "x"})
+    assert div.containsParamSubset({"class": "xex"})
+    assert div.containsParamSubset({"id": "x", "class": "xex"})
+    assert not div.containsParamSubset({"asd": "bsd", "id": "x", "class": "xex"})

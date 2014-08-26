@@ -842,6 +842,25 @@ class HTMLElement(object):
     def __str__(self):
         return self.toString()
 
+    def containsParamSubset(self, params):
+        """
+        Test whether this element contains at least all `params`, or more.
+
+        Args:
+            params (dict/SpecialDict): Subset of parameters.
+
+        Returns:
+            bool: True if all `params` are contained in this element.
+        """
+        for key in params.keys():
+            if key not in self.params:
+                return False
+
+            if params[key] != self.params[key]:
+                return False
+
+        return True
+
     def isAlmostEqual(self, tag_name, params=None, fn=None,
                                                    case_sensitive=False):
         """
@@ -888,12 +907,8 @@ class HTMLElement(object):
             return True
 
         # test whether params dict is subset of self.params
-        for key in params.keys():
-            if key not in self.params:
-                return False
-
-            if params[key] != self.params[key]:
-                return False
+        if not self.containsParamSubset(params):
+            return False
 
         return True
 
