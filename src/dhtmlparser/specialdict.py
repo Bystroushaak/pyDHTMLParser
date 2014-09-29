@@ -4,6 +4,7 @@
 # Interpreter version: python 2.7
 #
 # Imports =====================================================================
+from collections import OrderedDict
 
 
 # Functions & objects =========================================================
@@ -24,7 +25,7 @@ def _lower_if_str(item):
     return item
 
 
-class SpecialDict(dict):
+class SpecialDict(OrderedDict):
     """
     This dictionary stores items case sensitive, but compare them case
     INsensitive.
