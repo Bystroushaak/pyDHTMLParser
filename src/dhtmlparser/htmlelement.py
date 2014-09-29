@@ -688,13 +688,13 @@ class HTMLElement(object):
 
     def tagToString(self):
         """
-        Get HTML element representation of the tag, but only the gag, not the
+        Get HTML element representation of the tag, but only the tag, not the
         :attr:`childs` or :attr:`endtag`.
 
         Returns:
             str: HTML representation.
         """
-        if not self.params:
+        if not self.isTag() or (not self.params and "=" not in self.__element):
             return self.__element
 
         output = "<" + str(self.__tagname)
@@ -704,18 +704,12 @@ class HTMLElement(object):
 
         return output + " />" if self.__isnonpairtag else output + ">"
 
-    def toString(self, original=False):
+    def toString(self):
         """
         Returns almost original string (use `original` = True if you want exact
         copy).
 
         If you want prettified string, try :meth:`prettify`.
-
-        Args:
-            original (bool, default False): If True, return parsed element, so
-                     if you changed something in :attr:`params`, there will be
-                     no traces of those changes.
-
         Returns:
             str: Complete representation of the element with childs, endtag \
                  and so on.
@@ -723,10 +717,10 @@ class HTMLElement(object):
         output = ""
 
         if self.childs or self.isOpeningTag():
-            output += self.__element if original else self.tagToString()
+            output += self.tagToString()
 
             for c in self.childs:
-                output += c.toString(original)
+                output += c.toString()
 
             if self.endtag is not None:
                 output += self.endtag.tagToString()
