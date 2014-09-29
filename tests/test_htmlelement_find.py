@@ -27,8 +27,8 @@ def test_find():
     div_xe = div_xe[0]
     div_xex = div_xex[0]
 
-    assert div_xe.toString() == '<div a="b" ID="xa">obsah xa divu</div>'
-    assert div_xex.toString() == '<div a="b" id="xex">obsah xex divu</div>'
+    assert div_xe.toString() == '<div ID="xa" a="b">obsah xa divu</div>'
+    assert div_xex.toString() == '<div id="xex" a="b">obsah xex divu</div>'
 
     assert div_xe.getTagName() == "div"
     assert div_xex.getTagName() == "div"

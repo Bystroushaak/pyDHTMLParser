@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.6
+-----
+    - Fixed behaviour of toString() and tagToString().
+    - SpecialDict is now derived from OrderedDict.
+    - Changed and added tests of .params attribute (OrderedDict is now used).
+
 2.0.5
 -----
     - Added new method ``.containsParamSubset()`` to ``HTMLElement``.

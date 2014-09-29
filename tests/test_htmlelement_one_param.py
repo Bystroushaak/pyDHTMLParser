@@ -112,7 +112,7 @@ def test_constructor_param_tag():
     assert not e.endtag
     assert not e.openertag
 
-    assert e.toString(original=True) == text
+    assert e.toString() == '<hello as="bsd" xe="1" xax="xerexe">'
     assert e.getContent() == ""
     assert e.getTagName() == "hello"
 

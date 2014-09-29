@@ -44,3 +44,13 @@ def test_removeChild():
 
     assert dom2.getContent() == ""
     assert not dom2.childs
+
+
+def test_params():
+    dom = dhtmlparser.parseString("<xe id=1 />")
+    xe = dom.find("xe")[0]
+
+    assert xe.params["id"] == "1"
+
+    xe.params = {}
+    assert str(xe) == "<xe />"
