@@ -122,6 +122,7 @@ def _repair_tags(taglist):
 
         if el.isComment():
             if not index > 0 and index < len(taglist) - 1:
+                index += 1
                 continue
 
             prev_tag = taglist[index - 1].tagToString()
