@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.8
+-----
+    - Removed _repair_tags() - it wasn't really necessary.
+
 2.0.7
 -----
     - Fixed bug in _repair_tags().
