@@ -72,37 +72,6 @@ def test_raw_split_comments():
     assert splitted[2] == "</html>"
 
 
-def test_repair_tags():
-    repaired = dhtmlparser._repair_tags(
-        map(
-            lambda x: dhtmlparser.HTMLElement(x),
-            dhtmlparser._raw_split(
-                '<html><tag params="true"></html>'
-            )
-        )
-    )
-
-    assert repaired[0].tagToString() == "<html>"
-    assert repaired[1].tagToString() == '<tag params="true">'
-    assert repaired[2].tagToString() == '</html>'
-
-
-def test_repair_tags_bad():
-    repaired = dhtmlparser._repair_tags(
-        map(
-            lambda x: dhtmlparser.HTMLElement(x),
-            dhtmlparser._raw_split(
-                '<html><tag <!-- comment --> params="true"></html>'
-            )
-        )
-    )
-
-    assert repaired[0].tagToString() == "<html>"
-    assert repaired[1].tagToString() == '<tag params="true">'
-    assert repaired[2].tagToString() == '<!-- comment -->'
-    assert repaired[3].tagToString() == '</html>'
-
-
 def test_index_of_end_tag():
     tag_list = [
         dhtmlparser.HTMLElement("<h1>"),
