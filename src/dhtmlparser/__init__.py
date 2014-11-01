@@ -101,47 +101,6 @@ def _raw_split(itxt):
     return array
 
 
-def _repair_tags(taglist):
-    """
-    Repair tags with comments.
-
-    ``<HT<!-- asad -->ML>`` is parsed to ``["<HT", "<!-- asad -->", "ML>"]``
-    and I need ``["<HTML>", "<!-- asad -->"]``).
-
-    Args:
-        taglist (list): List of :class:`.HTMLElement` objects.
-
-    Returns:
-        list: List of repaired :class:`.HTMLElement` objects.
-    """
-    ostack = []
-
-    index = 0
-    while index < len(taglist):
-        el = taglist[index]
-
-        if el.isComment():
-            if not index > 0 and index < len(taglist) - 1:
-                index += 1
-                continue
-
-            prev_tag = taglist[index - 1].tagToString()
-            next_tag = taglist[index + 1].tagToString()
-
-            if prev_tag.startswith("<") and next_tag.endswith(">"):
-                ostack[-1] = HTMLElement(prev_tag + next_tag)
-                ostack.append(el)
-
-                # skip next (it is already added)
-                index += 2
-                continue
-
-        ostack.append(el)
-        index += 1
-
-    return ostack
-
-
 def _indexOfEndTag(istack):
     """
     Go through `istack` and search endtag. Element at first index is considered
@@ -242,8 +201,9 @@ def parseString(txt, cip=True):
 
     container = HTMLElement()
     container.childs = _parseDOM(
-        _repair_tags(
-            map(lambda x: HTMLElement(x), _raw_split(txt))
+        map(
+            lambda x: HTMLElement(x),
+            _raw_split(txt)
         )
     )
 
