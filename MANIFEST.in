@@ -1,5 +1,5 @@
 include README.rst CHANGES.rst run_tests.sh
 recursive-include examples *
-recursive-include html_docs *
+recursive-include docs *
 recursive-include tests *
 recursive-exclude tests/__pycache__ *
