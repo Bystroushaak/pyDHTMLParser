@@ -884,12 +884,14 @@ class HTMLElement(object):
         if fn and not fn(self):
             return False
 
+        # compare case sensitive?
+        comparator = self.__tagname  # we need to make self.__tagname lower
         if not case_sensitive and tag_name:
-            self.__tagname = self.__tagname.lower()
             tag_name = tag_name.lower()
+            comparator = comparator.lower()
 
         # compare tagname
-        if tag_name and tag_name != self.__tagname:
+        if tag_name and tag_name != comparator:
             return False
 
         # None params = don't use parameters to compare equality
