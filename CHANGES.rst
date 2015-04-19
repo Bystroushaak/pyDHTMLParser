@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.0.9
+-----
+    - Fixed nasty bug which *could* cause invalid XML output.
+
 2.0.8
 -----
     - Removed _repair_tags() - it wasn't really necessary.
