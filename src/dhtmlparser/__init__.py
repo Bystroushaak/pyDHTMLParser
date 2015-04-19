@@ -243,7 +243,7 @@ def removeTags(dom):
         element_stack = dom
     elif isinstance(dom, HTMLElement):
         element_stack = dom.childs if dom.isTag() else [dom]
-    elif isinstance(dom, str):
+    elif isinstance(dom, basestring):
         element_stack = parseString(dom).childs
     else:
         element_stack = dom

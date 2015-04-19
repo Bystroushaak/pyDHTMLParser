@@ -202,3 +202,9 @@ def test_remove_tags():
 
     dom = dhtmlparser.parseString("<b><!-- asd --><i></b>")
     assert not dhtmlparser.removeTags(dom)
+
+
+def test_remove_tags_str_input():
+    inp = "a<b>xax<i>xe</i>xi</b>d"
+
+    assert dhtmlparser.removeTags(inp) == "axaxxexid"
