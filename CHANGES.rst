@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.10
+------
+    - Added more tests of removeTags().
+    - run_tests.sh now gets arguments.
+    - Check for string in removeTags() changed to basestring from str.
+
 2.0.9
 -----
     - Fixed nasty bug which *could* cause invalid XML output.
