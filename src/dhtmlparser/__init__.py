@@ -7,6 +7,15 @@ from htmlelement import HTMLElement, _rotate_buff, NONPAIR_TAGS
 
 
 # Functions ===================================================================
+class StateEnum(object):
+    _cnt = (x for x in range(100))
+
+    content = next(_cnt)
+    tag = next(_cnt)
+    parameter = next(_cnt)
+    comment = next(_cnt)
+
+
 def _raw_split(itxt):
     """
     Parse HTML from text into array filled with tags end text.
@@ -38,35 +47,37 @@ def _raw_split(itxt):
     COMMENT_END = ["-", "-"]
 
     for c in itxt:
-        if next_state == 0:    # content
+        # content
+        if next_state == StateEnum.content:
             if c == "<":
                 if content:
                     array.append(content)
 
                 content = c
-                next_state = 1
+                next_state = StateEnum.tag
                 inside_tag = False
 
             else:
                 content += c
 
-        elif next_state == 1:  # html tag
+        # html tag
+        elif next_state == StateEnum.tag:
             if c == ">":
                 array.append(content + c)
                 content = ""
-                next_state = 0
+                next_state = StateEnum.content
 
             elif c == "'" or c == '"':
                 echr = c
                 content += c
-                next_state = 2
+                next_state = StateEnum.parameter
 
             elif c == "-" and buff[:3] == COMMENT_START:
                 if content[:-3]:
                     array.append(content[:-3])
 
                 content = content[-3:] + c
-                next_state = 3
+                next_state = StateEnum.comment
 
             else:
                 if c == "<":   # jump back into tag instead of content
@@ -74,21 +85,23 @@ def _raw_split(itxt):
 
                 content += c
 
-        elif next_state == 2:  # "" / ''
+        # quotes "" / ''
+        elif next_state == StateEnum.parameter:
             if c == echr and not escaped:  # end of quotes
-                next_state = 1
+                next_state = StateEnum.tag
 
             # unescaped end of line - this is good for invalid HTML like
             # <a href=something">..., because it allows recovery
             if c == "\n" and not escaped:
-                next_state = 0  # content
+                next_state = StateEnum.content
 
             content += c
             escaped = not escaped if c == "\\" else False
 
-        elif next_state == 3:  # html comments
+        # html comments
+        elif next_state == StateEnum.comment:
             if c == ">" and buff[:2] == COMMENT_END:
-                next_state = 1 if inside_tag else 0
+                next_state = StateEnum.tag if inside_tag else StateEnum.content
                 inside_tag = False
 
                 array.append(content + c)
