@@ -224,12 +224,9 @@ def parseString(txt, cip=True):
         htmlelement.SpecialDict = specialdict.SpecialDict
 
     container = HTMLElement()
-    container.childs = _parseDOM(
-        map(
-            lambda x: HTMLElement(x),
-            _raw_split(txt)
-        )
-    )
+    container.childs = _parseDOM([
+        HTMLElement(x) for x in _raw_split(txt)
+    ])
 
     return container
 

@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.1.0
+-----
+    - State parser fixed - it can now recover from invalid html like ``<invalid tag=something">``.
+    - Rewritten to use ``StateEnum`` in parser for better readability.
+    - Garbage collector is now disabled during _raw_split().
+
 2.0.10
 ------
     - Added more tests of removeTags().
