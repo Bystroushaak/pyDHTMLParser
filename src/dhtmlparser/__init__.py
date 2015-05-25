@@ -1,9 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # Imports =====================================================================
+import gc
+
 import specialdict
 import htmlelement
-from htmlelement import HTMLElement, _rotate_buff, NONPAIR_TAGS
+from htmlelement import HTMLElement, _rotate_buff
 
 
 # Functions ===================================================================
@@ -45,6 +47,8 @@ def _raw_split(itxt):
 
     COMMENT_START = ["-", "!", "<"]
     COMMENT_END = ["-", "-"]
+
+    gc.disable()
 
     for c in itxt:
         # content
@@ -112,6 +116,8 @@ def _raw_split(itxt):
         # rotate buffer
         buff = _rotate_buff(buff)
         buff[0] = c
+
+    gc.enable()
 
     if content:
         array.append(content)
