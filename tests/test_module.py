@@ -208,3 +208,16 @@ def test_remove_tags_str_input():
     inp = "a<b>xax<i>xe</i>xi</b>d"
 
     assert dhtmlparser.removeTags(inp) == "axaxxexid"
+
+
+def test_recovery_after_invalid_tag():
+    inp = """<sometag />
+<invalid tag=something">notice that quote is not properly started</invalid>
+<something_parsable />
+"""
+
+    dom = dhtmlparser.parseString(inp)
+
+    assert dom.find("sometag")
+    assert not dom.find("invalid")
+    assert dom.find("something_parsable")

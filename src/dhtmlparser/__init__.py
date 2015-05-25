@@ -75,8 +75,13 @@ def _raw_split(itxt):
                 content += c
 
         elif next_state == 2:  # "" / ''
-            if c == echr and not escaped:
+            if c == echr and not escaped:  # end of quotes
                 next_state = 1
+
+            # unescaped end of line - this is good for invalid HTML like
+            # <a href=something">..., because it allows recovery
+            if c == "\n" and not escaped:
+                next_state = 0  # content
 
             content += c
             escaped = not escaped if c == "\\" else False
