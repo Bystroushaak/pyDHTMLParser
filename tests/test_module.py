@@ -233,3 +233,17 @@ def test_recovery_after_unclosed_tag():
     dom = dhtmlparser.parseString(inp)
 
     assert dom.find("div", {"class": "rating"})
+
+
+def test_recovery_after_is_smaller_than_sign():
+    inp = """<code>5 < 10.</code>
+    <div class="rating">here is the rating</div>
+    """
+
+    dom = dhtmlparser.parseString(inp)
+
+    code = dom.find("code")
+
+    assert code
+    assert code[0].getContent() == "5 < 10."
+    assert dom.find("div", {"class": "rating"})
