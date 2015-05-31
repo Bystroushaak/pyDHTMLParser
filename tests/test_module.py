@@ -221,3 +221,15 @@ def test_recovery_after_invalid_tag():
     assert dom.find("sometag")
     assert not dom.find("invalid")
     assert dom.find("something_parsable")
+
+
+def test_recovery_after_unclosed_tag():
+    inp = """<code>Já vím... je to příliž krátké a chybí diakritika - je to můj první článek kterej jsem kdy o Linux psal.</code
+<!-- -->
+
+    <div class="rating">here is the rating</div>
+    """
+
+    dom = dhtmlparser.parseString(inp)
+
+    assert dom.find("div", {"class": "rating"})
