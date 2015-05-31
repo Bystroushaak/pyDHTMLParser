@@ -85,7 +85,9 @@ def _raw_split(itxt):
 
             else:
                 if c == "<":   # jump back into tag instead of content
+                    array.append(content)
                     inside_tag = True
+                    content = ""
 
                 content += c
 
@@ -98,6 +100,7 @@ def _raw_split(itxt):
             # <a href=something">..., because it allows recovery
             if c == "\n" and not escaped:
                 next_state = StateEnum.content
+                inside_tag = False
 
             content += c
             escaped = not escaped if c == "\\" else False

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1.1
+-----
+    - Fixed #16 - recovery after tags which don't ends with ``>`` (``</code`` for example).
+
 2.1.0
 -----
     - State parser fixed - it can now recover from invalid html like ``<invalid tag=something">``.
