@@ -4,6 +4,7 @@ Changelog
 2.1.1
 -----
     - Fixed #16 - recovery after tags which don't ends with ``>`` (``</code`` for example).
+    - Closed #17 - implementation of ignoring of ``<`` in usage as `is smaller than` sign.
 
 2.1.0
 -----
@@ -17,44 +18,23 @@ Changelog
     - run_tests.sh now gets arguments.
     - Check for string in removeTags() changed to basestring from str.
 
-2.0.9
------
-    - Fixed nasty bug which *could* cause invalid XML output.
-
-2.0.8
------
-    - Removed _repair_tags() - it wasn't really necessary.
-
-2.0.7
------
-    - Fixed bug in _repair_tags().
-
-2.0.6
------
+2.0.6 - 2.0.9
+-------------
     - Fixed behaviour of toString() and tagToString().
     - SpecialDict is now derived from OrderedDict.
     - Changed and added tests of .params attribute (OrderedDict is now used).
+    - Fixed bug in _repair_tags().
+    - Removed _repair_tags() - it wasn't really necessary.
+    - Fixed nasty bug which *could* cause invalid XML output.
 
-2.0.5
------
-    - Added new method ``.containsParamSubset()`` to ``HTMLElement``.
-
-2.0.4
------
-    - Added op ``.__eq__()`` to the `SpecialDict`.
-
-2.0.3
------
-    - ``.find()``; Fixed bug which prevented tag_name to be None.
-
-2.0.2
------
-    - Fixed bugs in ``.isAlmostEqual()``.
-
-2.0.1
------
+2.0.1 - 2.0.5
+-------------
     - Fixed bugs in ``.match()``.
     - Fixed broken links in documentation.
+    - Fixed bugs in ``.isAlmostEqual()``.
+    - ``.find()``; Fixed bug which prevented tag_name to be None.
+    - Added op ``.__eq__()`` to the `SpecialDict`.
+    - Added new method ``.containsParamSubset()`` to ``HTMLElement``.
 
 2.0.0
 -----
