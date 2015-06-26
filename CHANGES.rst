@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1.2
+-----
+    - Restored support of multiline attributes.
+
 2.1.1
 -----
     - Fixed #16 - recovery after tags which don't ends with ``>`` (``</code`` for example).

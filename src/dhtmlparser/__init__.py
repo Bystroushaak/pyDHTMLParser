@@ -98,7 +98,7 @@ def _raw_split(itxt):
 
             # unescaped end of line - this is good for invalid HTML like
             # <a href=something">..., because it allows recovery
-            if c == "\n" and not escaped:
+            if c == "\n" and not escaped and buff[0] == ">":
                 next_state = StateEnum.content
                 inside_tag = False
 
