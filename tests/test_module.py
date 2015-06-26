@@ -223,6 +223,25 @@ def test_recovery_after_invalid_tag():
     assert dom.find("something_parsable")
 
 
+def test_multiline_attribute():
+    inp = """<sometag />
+<ubertag attribute="long attribute
+                    continues here">
+    <valid>notice that quote is not properly started</valid>
+</ubertag>
+<something_parsable />
+"""
+
+    dom = dhtmlparser.parseString(inp)
+
+    assert dom.find("sometag")
+    assert dom.find("valid")
+    assert dom.find("ubertag")
+    assert dom.find("ubertag")[0].params["attribute"] == """long attribute
+                    continues here"""
+    assert dom.find("something_parsable")
+
+
 def test_recovery_after_unclosed_tag():
     inp = """<code>Já vím... je to příliž krátké a chybí diakritika - je to můj první článek kterej jsem kdy o Linux psal.</code
 <!-- -->
