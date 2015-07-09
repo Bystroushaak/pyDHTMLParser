@@ -217,13 +217,16 @@ def parseString(txt, cip=True):
              in it's :attr:`.HTMLElement.childs` property. This element can be \
              queried using :meth:`.HTMLElement.find` functions.
     """
+    if isinstance(txt, HTMLElement):
+        return txt
+
     # remove UTF BOM (prettify fails if not)
     if len(txt) > 3 and txt.startswith("\xef\xbb\xbf"):
         txt = txt[3:]
 
     if not cip:
         htmlelement.SpecialDict = dict
-    elif type(htmlelement.SpecialDict) == dict:
+    elif isinstance(htmlelement.SpecialDict, dict):
         htmlelement.SpecialDict = specialdict.SpecialDict
 
     container = HTMLElement()

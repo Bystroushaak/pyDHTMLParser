@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1.3
+-----
+    - ``.parseString()`` now doesn't try to parse HTML element parameters.
+
 2.1.2
 -----
     - Restored support of multiline attributes.
