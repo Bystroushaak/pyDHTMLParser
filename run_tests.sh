@@ -1,4 +1,4 @@
-#! /usr/bin/env bash
-PYTHONPATH="src:$PYTHONPATH"
+#! /usr/bin/env sh
+export PYTHONPATH="src:$PYTHONPATH"
 
-py.test $@
+py.test tests $@
