@@ -18,6 +18,26 @@ class StateEnum(object):
     comment = next(_cnt)
 
 
+def first(inp_data):
+    """
+    Return first element from `inp_data`, or raise StopIteration.
+
+    Note:
+        This function was created because it works for generators, lists,
+        iterators, tuples and so on same way, which indexing doesn't.
+
+        Also it have smaller cost than list(generator)[0], because it doesn't
+        convert whole `inp_data` to list.
+
+    Args:
+        inp_data (iterable): Any iterable object.
+
+    Raises:
+        StopIteration: When the `inp_data` is blank.
+    """
+    return next(x for x in inp_data)
+
+
 def _raw_split(itxt):
     """
     Parse HTML from text into array filled with tags end text.
