@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1.4
+-----
+    - Implemented ``first()`` getter.
+
 2.1.3
 -----
     - ``.parseString()`` now doesn't try to parse HTML element parameters.

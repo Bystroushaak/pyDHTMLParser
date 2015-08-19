@@ -5,6 +5,7 @@
 #
 # Imports =====================================================================
 import dhtmlparser
+from dhtmlparser import first
 
 
 # Functions & objects =========================================================
@@ -24,8 +25,8 @@ def test_find():
     assert div_xex
     assert not div_xerexes
 
-    div_xe = div_xe[0]
-    div_xex = div_xex[0]
+    div_xe = first(div_xe)
+    div_xex = first(div_xex)
 
     assert div_xe.toString() == '<div ID="xa" a="b">obsah xa divu</div>'
     assert div_xex.toString() == '<div id="xex" a="b">obsah xex divu</div>'
@@ -54,8 +55,8 @@ def test_find_fn():
     assert div_tags
     assert len(div_tags) == 1
 
-    assert div_tags[0].params.get("id") == "first"
-    assert div_tags[0].getContent().strip().startswith("First div.")
+    assert first(div_tags).params.get("id") == "first"
+    assert first(div_tags).getContent().strip().startswith("First div.")
 
 
 def test_find_params():
@@ -78,8 +79,8 @@ def test_find_params():
     assert div_tags
     assert len(div_tags) == 1
 
-    assert div_tags[0].params.get("id") == "first"
-    assert div_tags[0].getContent().strip().startswith("First div.")
+    assert first(div_tags).params.get("id") == "first"
+    assert first(div_tags).getContent().strip().startswith("First div.")
 
 
 def test_findB():
@@ -119,7 +120,7 @@ def test_wfind():
     div = dom.wfind("div").wfind("div")
 
     assert div.childs
-    assert div.childs[0].params["id"] == "first.subdiv"
+    assert first(div.childs).params["id"] == "first.subdiv"
 
 
 def test_wfind_complicated():
@@ -146,7 +147,7 @@ def test_wfind_complicated():
     xe = dom.wfind("root").wfind("some").wfind("something").find("xe")
 
     assert len(xe) == 1
-    assert xe[0].params["id"] == "wanted xe"
+    assert first(xe).params["id"] == "wanted xe"
 
     unicorn = dom.wfind("root").wfind("pink").wfind("unicorn")
 
@@ -241,7 +242,7 @@ def test_match_parameters():
     )
 
     assert len(xe) == 1
-    assert xe[0].params["id"] == "wanted xe"
+    assert first(xe).params["id"] == "wanted xe"
 
 
 def test_match_parameters_relative_path():
@@ -273,7 +274,7 @@ def test_match_parameters_relative_path():
     )
 
     assert len(xe) == 1
-    assert xe[0].params["id"] == "wanted xe"
+    assert first(xe).params["id"] == "wanted xe"
 
     xe = dom.match(
         {"tag_name": "div", "params": {"id": "1"}},

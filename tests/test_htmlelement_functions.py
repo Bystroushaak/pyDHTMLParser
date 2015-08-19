@@ -5,6 +5,7 @@
 #
 # Imports =====================================================================
 import dhtmlparser
+from dhtmlparser import first
 from dhtmlparser.htmlelement import _rotate_buff, _closeElements
 
 
@@ -41,4 +42,4 @@ def test_closeElements():
 
     xe = tag.find("xe")
     assert xe
-    assert xe[0].endtag
+    assert first(xe).endtag

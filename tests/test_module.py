@@ -7,6 +7,7 @@
 import pytest
 
 import dhtmlparser
+from dhtmlparser import first
 
 
 # Functions & objects =========================================================
@@ -103,11 +104,11 @@ def test_parse_dom():
     dom = dhtmlparser._parseDOM(tag_list)
 
     assert len(dom) == 2
-    assert len(dom[0].childs) == 2
-    assert dom[0].childs[0].getTagName() == "xx"
-    assert dom[0].childs[1].getTagName() == "xx"
-    assert dom[0].childs[0].isNonPairTag()
-    assert dom[0].childs[1].isNonPairTag()
+    assert len(first(dom).childs) == 2
+    assert first(dom).childs[0].getTagName() == "xx"
+    assert first(dom).childs[1].getTagName() == "xx"
+    assert first(dom).childs[0].isNonPairTag()
+    assert first(dom).childs[1].isNonPairTag()
 
     assert not dom[0].isNonPairTag()
     assert not dom[1].isNonPairTag()
@@ -237,7 +238,7 @@ def test_multiline_attribute():
     assert dom.find("sometag")
     assert dom.find("valid")
     assert dom.find("ubertag")
-    assert dom.find("ubertag")[0].params["attribute"] == """long attribute
+    assert first(dom.find("ubertag")).params["attribute"] == """long attribute
                     continues here"""
     assert dom.find("something_parsable")
 
@@ -264,5 +265,5 @@ def test_recovery_after_is_smaller_than_sign():
     code = dom.find("code")
 
     assert code
-    assert code[0].getContent() == "5 < 10."
+    assert first(code).getContent() == "5 < 10."
     assert dom.find("div", {"class": "rating"})

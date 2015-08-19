@@ -5,6 +5,7 @@
 #
 # Imports =====================================================================
 import dhtmlparser
+from dhtmlparser import first
 
 
 # Variables ===================================================================
@@ -14,7 +15,7 @@ dom = dhtmlparser.parseString(TEXT)
 
 # Functions & objects =========================================================
 def test_replaceWith():
-    nonpair = dom.find("nonpair")[0]
+    nonpair = first(dom.find("nonpair"))
 
     assert nonpair
 
@@ -48,7 +49,7 @@ def test_removeChild():
 
 def test_params():
     dom = dhtmlparser.parseString("<xe id=1 />")
-    xe = dom.find("xe")[0]
+    xe = first(dom.find("xe"))
 
     assert xe.params["id"] == "1"
 
