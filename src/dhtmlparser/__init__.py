@@ -194,6 +194,9 @@ def _parseDOM(istack):
     ostack = []
     end_tag_index = 0
 
+    def neither_nonpair_or_end_or_comment(el):
+        return not (el.isNonPairTag() or el.isEndTag() or el.isComment())
+
     index = 0
     while index < len(istack):
         el = istack[index]
@@ -201,7 +204,7 @@ def _parseDOM(istack):
         # check if this is pair tag
         end_tag_index = _indexOfEndTag(istack[index:])
 
-        if not el.isNonPairTag() and end_tag_index == 0 and not el.isEndTag():
+        if end_tag_index == 0 and neither_nonpair_or_end_or_comment(el):
             el.isNonPairTag(True)
 
         if end_tag_index == 0:

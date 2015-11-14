@@ -166,9 +166,9 @@ class HTMLElement(object):
         else:
             raise Exception("Unknown type '%s'!" % type(tag))
 
-    #==========================================================================
-    #= Constructor overloading ================================================
-    #==========================================================================
+    # =========================================================================
+    # = Constructor overloading ===============================================
+    # =========================================================================
     def __init_tag(self, tag):
         """
         True constructor, which really initializes the :class:`HTMLElement`.
@@ -183,7 +183,7 @@ class HTMLElement(object):
         self.__parseIsTag()
         self.__parseIsComment()
 
-        if (not self.__istag) or self.__iscomment:
+        if not self.__istag or self.__iscomment:
             self.__tagname = self.__element
         else:
             self.__parseTagName()
@@ -503,6 +503,9 @@ class HTMLElement(object):
         Result is saved to the :attr:`__isnonpairtag` property.
         """
         self.__isnonpairtag = False
+
+        if self.__iscomment:
+            return
 
         if self.__element.startswith("<") and self.__element.endswith("/>"):
             self.__isnonpairtag = True
@@ -851,6 +854,9 @@ class HTMLElement(object):
     # =========================================================================
     def __str__(self):
         return self.toString()
+
+    def __repr__(self):
+        return "HTMLElement(%s)" % repr(self.__str__())
 
     def containsParamSubset(self, params):
         """
