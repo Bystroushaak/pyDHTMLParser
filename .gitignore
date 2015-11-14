@@ -3,3 +3,6 @@ MANIFEST
 dist/*
 src/pyDHTMLParser.egg-info
 docs/_build
+.coverage
+htmlcov/*
+.cache/*
