@@ -1,29 +1,37 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+#
+# Interpreter version: python 2.7
+#
+# Imports =====================================================================
+from setuptools import setup
+from setuptools import find_packages
 
 from docs import getVersion
 
-changelog = open('CHANGES.rst').read()
-long_description = "\n\n".join([
+
+# Variables ===================================================================
+CHANGELOG = open('CHANGES.rst').read()
+LONG_DESCRIPTION = "\n\n".join([
     open('README.rst').read(),
-    changelog
+    CHANGELOG
 ])
 
 
+# Actual setup definition =====================================================
 setup(
     name='pyDHTMLParser',
-    version=getVersion(changelog),
+    version=getVersion(CHANGELOG),
     py_modules=['dhtmlparser'],
 
     author='Bystroushaak',
     author_email='bystrousak@kitakitsune.org',
 
     url='https://github.com/Bystroushaak/pyDHTMLParser',
-    description='Python HTML/XML parser for simple web scraping.',
     license='MIT',
+    description='Python HTML/XML parser for simple web scraping.',
 
-    long_description=long_description,
+    long_description=LONG_DESCRIPTION,
 
     packages=find_packages('src'),
     package_dir={'': 'src'},
