@@ -63,13 +63,17 @@ def test_get_function():
     assert sd.get("y", "Nope") == "Nope"
 
 
-def test_quality():
-    first = SpecialDict({1:2, 2:3, 3:4})
-    second = SpecialDict({3:4, 2:3, 1:2})
+def test_equality():
+    first = SpecialDict({1: 2, 2: 3, 3: 4})
+    second = SpecialDict({3: 4, 2: 3, 1: 2})
 
     assert first == second
 
     assert SpecialDict({"a": "b", "B": "a"}) == SpecialDict({"A": "b", "b": "a"})
+
+    assert first == first
+    assert SpecialDict({2: 3}) != SpecialDict({1: 2})
+    assert SpecialDict({1: 2, 2: 3, 3: 4}) != "potato"
 
 
 def test_lower_if_str():
