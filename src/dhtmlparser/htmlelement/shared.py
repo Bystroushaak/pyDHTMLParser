@@ -34,3 +34,39 @@ def _rotate_buff(buff):
         list: Rotated buffer.
     """
     return [buff[-1]] + buff[:-1]
+
+
+def _closeElements(childs, HTMLElement):
+    """
+    Create `endtags` to elements which looks like openers, but doesn't have
+    proper :attr:`HTMLElement.endtag`.
+
+    Args:
+        childs (list): List of childs (:class:`HTMLElement` obj) - typically
+               from :attr:`HTMLElement.childs` property.
+
+    Returns:
+        list: List of closed elements.
+    """
+    o = []
+
+    # close all unclosed pair tags
+    for e in childs:
+        if not e.isTag():
+            o.append(e)
+            continue
+
+        if not e.isNonPairTag() and not e.isEndTag() and not e.isComment() \
+           and e.endtag is None:
+            e.childs = _closeElements(e.childs, HTMLElement)
+
+            o.append(e)
+            o.append(HTMLElement("</" + e.getTagName() + ">"))
+
+            # join opener and endtag
+            e.endtag = o[-1]
+            o[-1].openertag = e
+        else:
+            o.append(e)
+
+    return o
