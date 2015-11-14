@@ -11,6 +11,12 @@ from html_parser import _is_iterable
 # Variables ===================================================================
 # Functions & classes =========================================================
 class HTMLElement(HTMLQuery):
+    def __str__(self):
+        return self.toString()
+
+    def __repr__(self):
+        return "HTMLElement(%s)" % repr(self.__str__())
+
     def replaceWith(self, el):
         """
         Replace value in this element with values from `el`.
@@ -70,3 +76,69 @@ class HTMLElement(HTMLQuery):
                 self.childs.remove(end_tag)
 
             self.childs.remove(e)
+
+    def prettify(self, depth=0, separator="  ", last=True, pre=False,
+                 inline=False):
+        """
+        Same as :meth:`toString`, but returns prettified element with content.
+
+        Note:
+            This method is partially broken, and can sometimes create
+            unexpected results.
+
+        Returns:
+            str: Prettified string.
+        """
+        output = ""
+
+        if self.getTagName() != "" and self.tagToString().strip() == "":
+            return ""
+
+        # if not inside <pre> and not inline, shift tag to the right
+        if not pre and not inline:
+            output += (depth * separator)
+
+        # for <pre> set 'pre' flag
+        if self.getTagName().lower() == "pre" and self.isOpeningTag():
+            pre = True
+            separator = ""
+
+        output += self.tagToString()
+
+        # detect if inline - is_inline shows if inline was set by detection, or
+        # as parameter
+        is_inline = inline
+        for c in self.childs:
+            if not (c.isTag() or c.isComment()):
+                if len(c.tagToString().strip()) != 0:
+                    inline = True
+
+        # don't shift if inside container (containers have blank tagname)
+        original_depth = depth
+        if self.getTagName() != "":
+            if not pre and not inline:  # inside <pre> doesn't shift tags
+                depth += 1
+                if self.tagToString().strip() != "":
+                    output += "\n"
+
+        # prettify childs
+        for e in self.childs:
+            if not e.isEndTag():
+                output += e.prettify(
+                    depth,
+                    last=False,
+                    pre=pre,
+                    inline=inline
+                )
+
+        # endtag
+        if self.endtag is not None:
+            if not pre and not inline:
+                output += ((original_depth) * separator)
+
+            output += self.endtag.tagToString().strip()
+
+            if not is_inline:
+                output += "\n"
+
+        return output
