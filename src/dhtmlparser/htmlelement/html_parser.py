@@ -404,33 +404,6 @@ class HTMLParser(object):
 
         return output + " />" if self._isnonpairtag else output + ">"
 
-    def toString(self):
-        """
-        Returns almost original string (use `original` = True if you want exact
-        copy).
-
-        If you want prettified string, try :meth:`prettify`.
-
-        Returns:
-            str: Complete representation of the element with childs, endtag \
-                 and so on.
-        """
-        output = ""
-
-        if self.childs or self.isOpeningTag():
-            output += self.tagToString()
-
-            for c in self.childs:
-                output += c.toString()
-
-            if self.endtag is not None:
-                output += self.endtag.tagToString()
-
-        elif not self.isEndTag():
-            output += self.tagToString()
-
-        return output
-
     def getTagName(self):
         """
         Returns:
@@ -441,26 +414,5 @@ class HTMLParser(object):
             return self._element
 
         return self._tagname
-
-    def getContent(self):
-        """
-        Returns:
-            str: Content of tag (everything between `opener` and `endtag`).
-        """
-        if not self.isTag() and self._element:
-            return self._element
-
-        if not self.childs:
-            return ""
-
-        output = ""
-        for c in self.childs:
-            if not c.isEndTag():
-                output += c.toString()
-
-        if output.endswith("\n"):
-            return output.rstrip()
-
-        return output
 
     # * /Getters **************************************************************
