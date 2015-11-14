@@ -1,6 +1,19 @@
 Changelog
 =========
 
+2.1.5
+-----
+    - License changed to MIT.
+    - Fixed #18: bug which in some cases caused invalid output.
+
+    - Added HTMLElement.__repr__().
+    - Added test_coverage.sh.
+    - Added extended test_equality() coverage.
+
+    - Formatting improvements.
+    - Improved constructor handling, which is now much more readable.
+    - Updated formatting of the setup.py.
+
 2.1.4
 -----
     - Implemented ``first()`` getter.
