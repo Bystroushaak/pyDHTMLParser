@@ -7,5 +7,5 @@
 from shared import NONPAIR_TAGS
 from shared import _rotate_buff
 
-from htmlelement import HTMLElement
-from htmlelement import _closeElements
+from html_element import HTMLElement
+from html_parser import _closeElements

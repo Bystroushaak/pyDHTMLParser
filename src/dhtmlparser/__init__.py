@@ -235,11 +235,12 @@ def parseString(txt, cip=True):
     Args:
         txt (str): HTML/XML string, which will be parsed to DOM.
         cip (bool, default True): Case Insensitive Parameters. Use special
-            dictionary to store :attr:`.HTMLElement.params` as case insensitive.
+            dictionary to store :attr:`.HTMLElement.params` as case
+            insensitive.
 
     Returns:
-        obj: Single conteiner HTML element with blank tag, which has whole DOM \
-             in it's :attr:`.HTMLElement.childs` property. This element can be \
+        obj: Single conteiner HTML element with blank tag, which has whole DOM\
+             in it's :attr:`.HTMLElement.childs` property. This element can be\
              queried using :meth:`.HTMLElement.find` functions.
     """
     if isinstance(txt, HTMLElement):
@@ -250,9 +251,9 @@ def parseString(txt, cip=True):
         txt = txt[3:]
 
     if not cip:
-        htmlelement.htmlelement.SpecialDict = dict
-    elif isinstance(htmlelement.htmlelement.SpecialDict, dict):
-        htmlelement.htmlelement.SpecialDict = specialdict.SpecialDict
+        htmlelement.html_parser.SpecialDict = dict
+    elif isinstance(htmlelement.html_parser.SpecialDict, dict):
+        htmlelement.html_parser.SpecialDict = specialdict.SpecialDict
 
     container = HTMLElement()
     container.childs = _parseDOM([

@@ -6,7 +6,8 @@
 # Imports =====================================================================
 import dhtmlparser
 from dhtmlparser import first
-from dhtmlparser.htmlelement import _rotate_buff, _closeElements
+from dhtmlparser.htmlelement import _rotate_buff
+from dhtmlparser.htmlelement import _closeElements
 
 
 # Functions & objects =========================================================
@@ -38,7 +39,7 @@ def test_closeElements():
     assert xe
     assert not xe[0].endtag
 
-    tag.chids = _closeElements(tag.childs)
+    tag.chids = _closeElements(tag.childs, dhtmlparser.HTMLElement)
 
     xe = tag.find("xe")
     assert xe
