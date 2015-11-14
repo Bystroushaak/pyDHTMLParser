@@ -267,3 +267,14 @@ def test_recovery_after_is_smaller_than_sign():
     assert code
     assert first(code).getContent() == "5 < 10."
     assert dom.find("div", {"class": "rating"})
+
+
+def test_equality_of_output_with_comment():
+    inp = """<head>
+    <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
+</head>
+"""
+
+    dom = dhtmlparser.parseString(inp)
+
+    assert dom.__str__() == inp
