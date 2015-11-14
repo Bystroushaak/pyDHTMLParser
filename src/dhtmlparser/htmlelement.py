@@ -81,6 +81,26 @@ def _closeElements(childs):
     return o
 
 
+# helper functions
+def _is_str(tag):
+    return isinstance(tag, basestring)
+
+
+def _is_dict(tag):
+    return isinstance(tag, dict)
+
+
+def _is_iterable(container):
+    return type(container) in [list, tuple]
+
+
+def _all_html_elements(container):
+    if not container or not _is_iterable(container):
+        return False
+
+    return all(map(lambda x: isinstance(x, HTMLElement), container))
+
+
 class HTMLElement(object):
     """
     This class is used to represent single linked DOM (see
@@ -108,29 +128,14 @@ class HTMLElement(object):
         self.endtag = None
         self.openertag = None
 
-        def is_string(tag):
-            return isinstance(tag, basestring)
-
-        def is_dict(tag):
-            return isinstance(tag, dict)
-
-        def iterable(container):
-            return type(container) in [list, tuple]
-
-        def all_html_elements(container):
-            if not container or not iterable(container):
-                return False
-
-            return all(map(lambda x: isinstance(x, HTMLElement), container))
-
         # blah, constructor overloading in python sux :P
-        if is_string(tag) and not any([second, third]):
+        if _is_str(tag) and not any([second, third]):
             self.__init_tag(tag)
 
-        elif is_string(tag) and is_dict(second) and not third:
+        elif _is_str(tag) and _is_dict(second) and not third:
             self.__init_tag_params(tag, second)
 
-        elif is_string(tag) and is_dict(second) and all_html_elements(third):
+        elif _is_str(tag) and _is_dict(second) and _all_html_elements(third):
             # containers with childs are automatically considered as tags
             if tag.strip():
                 if not tag.startswith("<"):
@@ -142,7 +147,7 @@ class HTMLElement(object):
             self.childs = _closeElements(third)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
-        elif is_string(tag) and all_html_elements(second):
+        elif _is_str(tag) and _all_html_elements(second):
             # containers with childs are automatically considered as tags
             if tag.strip():
                 if not tag.startswith("<"):
@@ -154,7 +159,7 @@ class HTMLElement(object):
             self.childs = _closeElements(second)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
-        elif all_html_elements(tag):
+        elif _all_html_elements(tag):
             self.__init_tag("")
             self.childs = _closeElements(tag)
 
@@ -250,7 +255,8 @@ class HTMLElement(object):
             case_sensitive (bool, default False): Use case sensitive search.
 
         Returns:
-            list: List of :class:`HTMLElement` instances matching your criteria.
+            list: List of :class:`HTMLElement` instances matching your \
+                  criteria.
         """
         output = []
 
@@ -281,7 +287,8 @@ class HTMLElement(object):
             case_sensitive (bool, default False): Use case sensitive search.
 
         Returns:
-            list: List of :class:`HTMLElement` instances matching your criteria.
+            list: List of :class:`HTMLElement` instances matching your \
+                  criteria.
         """
         output = []
 
@@ -418,7 +425,8 @@ class HTMLElement(object):
                      used to progress to next arguments.
 
         Returns:
-            list: List of matching elements (blank if no matchin element found).
+            list: List of matching elements (empty list if no matching element\
+                  is found).
         """
         if not args:
             return self.childs
@@ -439,8 +447,8 @@ class HTMLElement(object):
             return el
 
         # if absolute is not specified (ie - next recursive call), use
-        # self._container, which is set to True by .wfind(), so next search will
-        # be absolute from the given element
+        # self._container, which is set to True by .wfind(), so next search
+        # will be absolute from the given element
         absolute = kwargs.get("absolute", None)
         if absolute is None:
             absolute = self._container
@@ -448,11 +456,11 @@ class HTMLElement(object):
         find_func = self.wfind if absolute else wrap_find
 
         result = None
-        if type(act) in [list, tuple]:
+        if _is_iterable(act):
             result = find_func(*act)
-        elif type(act) == dict:
+        elif _is_dict(act):
             result = find_func(**act)
-        elif type(act) in [str, unicode]:
+        elif _is_str(act):
             result = find_func(act)
         else:
             raise KeyError(
@@ -468,18 +476,17 @@ class HTMLElement(object):
         # False/None and so on (it shouldn't be, but ..)
         return match if match else []
 
-
-    #==========================================================================
-    #= Parsers ================================================================
-    #==========================================================================
+    # =========================================================================
+    # = Parsers ===============================================================
+    # =========================================================================
     def __parseIsTag(self):
         """
         Detect whether the element is HTML tag or not.
 
         Result is saved to the :attr:`__istag` property.
         """
-        self.__istag = self.__element.startswith("<") and \
-                       self.__element.endswith(">")
+        el = self.__element
+        self.__istag = el and el[0] == "<" and el[-1] == ">"
 
     def __parseIsEndTag(self):
         """
@@ -538,10 +545,10 @@ class HTMLElement(object):
 
         # remove '<' & '>'
         params = self.__element.strip()[1:-1].strip()
+
         # remove tagname
-        params = params[
-            params.find(self.getTagName()) + len(self.getTagName()):
-        ].strip()
+        offset = params.find(self.getTagName()) + len(self.getTagName())
+        params = params[offset:].strip()
 
         # parser machine
         next_state = 0
@@ -594,15 +601,15 @@ class HTMLElement(object):
             else:
                 self.params[key] = value
 
-        if filter(lambda x: x == "/", self.params.keys()):
+        if "/" in self.params.keys():
             del self.params["/"]
             self.__isnonpairtag = True
 
-    #* /Parsers ***************************************************************
+    # * /Parsers **************************************************************
 
-    #==========================================================================
-    #= Getters ================================================================
-    #==========================================================================
+    # =========================================================================
+    # = Getters ===============================================================
+    # =========================================================================
     def isTag(self):
         """
         Returns:
@@ -772,13 +779,13 @@ class HTMLElement(object):
         return output
 
     def prettify(self, depth=0, separator="  ", last=True, pre=False,
-                                                           inline=False):
+                 inline=False):
         """
         Same as :meth:`toString`, but returns prettified element with content.
 
         Note:
-            This method is partially broken, and can sometimes create unexpected
-            results.
+            This method is partially broken, and can sometimes create
+            unexpected results.
 
         Returns:
             str: Prettified string.
@@ -837,11 +844,11 @@ class HTMLElement(object):
 
         return output
 
-    #* /Getters ***************************************************************
+    # * /Getters **************************************************************
 
-    #==========================================================================
-    #= Operators ==============================================================
-    #==========================================================================
+    # =========================================================================
+    # = Operators =============================================================
+    # =========================================================================
     def __str__(self):
         return self.toString()
 
@@ -865,7 +872,7 @@ class HTMLElement(object):
         return True
 
     def isAlmostEqual(self, tag_name, params=None, fn=None,
-                                                   case_sensitive=False):
+                      case_sensitive=False):
         """
         Compare element with given `tag_name`, `params` and/or by lambda
         function `fn`.
@@ -917,11 +924,11 @@ class HTMLElement(object):
 
         return True
 
-    #* /Operators *************************************************************
+    # * /Operators ************************************************************
 
-    #==========================================================================
-    #= Setters ================================================================
-    #==========================================================================
+    # =========================================================================
+    # = Setters ===============================================================
+    # =========================================================================
     def replaceWith(self, el):
         """
         Replace value in this element with values from `el`.
@@ -961,7 +968,7 @@ class HTMLElement(object):
             end_tag_too (bool, default True): Remove also `child` endtag.
         """
         # if there are multiple childs, remove them
-        if type(child) in [list, tuple]:
+        if _is_iterable(child):
             map(lambda x: self.removeChild(x, end_tag_too), child)
             return
 
@@ -982,4 +989,4 @@ class HTMLElement(object):
 
             self.childs.remove(e)
 
-    #* /Setters ***************************************************************
+    # * /Setters **************************************************************
