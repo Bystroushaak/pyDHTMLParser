@@ -108,17 +108,29 @@ class HTMLElement(object):
         self.endtag = None
         self.openertag = None
 
+        def is_string(tag):
+            return isinstance(tag, basestring)
+
+        def is_dict(tag):
+            return isinstance(tag, dict)
+
+        def iterable(container):
+            return type(container) in [list, tuple]
+
+        def all_html_elements(container):
+            if not container or not iterable(container):
+                return False
+
+            return all(map(lambda x: isinstance(x, HTMLElement), container))
+
         # blah, constructor overloading in python sux :P
-        if type(tag) in [str, unicode] and not any([second, third]):
+        if is_string(tag) and not any([second, third]):
             self.__init_tag(tag)
 
-        elif type(tag) in [str, unicode] and type(second) == dict and not third:
+        elif is_string(tag) and is_dict(second) and not third:
             self.__init_tag_params(tag, second)
 
-        elif type(tag) in [str, unicode] and type(second) == dict and \
-             type(third) in [list, tuple] and len(third) > 0 and \
-             all(map(lambda x: isinstance(x, HTMLElement), third)):
-
+        elif is_string(tag) and is_dict(second) and all_html_elements(third):
             # containers with childs are automatically considered as tags
             if tag.strip():
                 if not tag.startswith("<"):
@@ -130,9 +142,7 @@ class HTMLElement(object):
             self.childs = _closeElements(third)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
-        elif type(tag) in [str, unicode] and type(second) in [list, tuple] and \
-             second and all(map(lambda x: isinstance(x, HTMLElement), second)):
-
+        elif is_string(tag) and all_html_elements(second):
             # containers with childs are automatically considered as tags
             if tag.strip():
                 if not tag.startswith("<"):
@@ -144,8 +154,7 @@ class HTMLElement(object):
             self.childs = _closeElements(second)
             self.endtag = HTMLElement("</" + self.getTagName() + ">")
 
-        elif type(tag) in [list, tuple] and tag and \
-             all(map(lambda x: isinstance(x, HTMLElement), tag)):
+        elif all_html_elements(tag):
             self.__init_tag("")
             self.childs = _closeElements(tag)
 
