@@ -7,44 +7,14 @@
 HTMLElement class used in DOM representation.
 """
 # Imports =====================================================================
-from quoter import escape, unescape
-from specialdict import SpecialDict
+from ..quoter import escape, unescape
+from ..specialdict import SpecialDict
 
-
-# Variables ===================================================================
-NONPAIR_TAGS = [
-    "br",
-    "hr",
-    "img",
-    "input",
-    #"link",
-    "meta",
-    "spacer",
-    "frame",
-    "base"
-]
-"""
-List of non-pair tags. Set this to blank list, if you wish to parse XML.
-"""
+from shared import NONPAIR_TAGS
+from shared import _rotate_buff
 
 
 # Functions & objects =========================================================
-def _rotate_buff(buff):
-    """
-    Rotate buffer (for each ``buff[i] = buff[i-1]``).
-
-    Example:
-        assert _rotate_buff([1, 2, 3, 4]) == [4, 1, 2, 3]
-
-    Args:
-        buff (list): Buffer which will be rotated.
-
-    Returns:
-        list: Rotated buffer.
-    """
-    return [buff[-1]] + buff[:-1]
-
-
 def _closeElements(childs):
     """
     Create `endtags` to elements which looks like openers, but doesn't have
@@ -860,7 +830,7 @@ class HTMLElement(object):
         return self.toString()
 
     def __repr__(self):
-        return "HTMLElement(%s)" % repr(self._str_())
+        return "HTMLElement(%s)" % repr(self.__str__())
 
     def containsParamSubset(self, params):
         """

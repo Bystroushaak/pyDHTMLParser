@@ -5,7 +5,9 @@ import gc
 
 import specialdict
 import htmlelement
-from htmlelement import HTMLElement, _rotate_buff
+
+from htmlelement import HTMLElement
+from htmlelement import _rotate_buff
 
 
 # Functions ===================================================================
@@ -248,9 +250,9 @@ def parseString(txt, cip=True):
         txt = txt[3:]
 
     if not cip:
-        htmlelement.SpecialDict = dict
-    elif isinstance(htmlelement.SpecialDict, dict):
-        htmlelement.SpecialDict = specialdict.SpecialDict
+        htmlelement.htmlelement.SpecialDict = dict
+    elif isinstance(htmlelement.htmlelement.SpecialDict, dict):
+        htmlelement.htmlelement.SpecialDict = specialdict.SpecialDict
 
     container = HTMLElement()
     container.childs = _parseDOM([
