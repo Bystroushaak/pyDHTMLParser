@@ -14,6 +14,78 @@ from html_parser import _is_iterable
 # Variables ===================================================================
 # Functions & classes =========================================================
 class HTMLQuery(HTMLParser):
+    def containsParamSubset(self, params):
+        """
+        Test whether this element contains at least all `params`, or more.
+
+        Args:
+            params (dict/SpecialDict): Subset of parameters.
+
+        Returns:
+            bool: True if all `params` are contained in this element.
+        """
+        for key in params.keys():
+            if key not in self.params:
+                return False
+
+            if params[key] != self.params[key]:
+                return False
+
+        return True
+
+    def isAlmostEqual(self, tag_name, params=None, fn=None,
+                      case_sensitive=False):
+        """
+        Compare element with given `tag_name`, `params` and/or by lambda
+        function `fn`.
+
+        Lambda function is same as in :meth:`find`.
+
+        Args:
+            tag_name (str): Compare just name of the element.
+            params (dict, default None): Compare also parameters.
+            fn (function, default None): Function which will be used for
+                                         matching.
+            case_sensitive (default False): Use case sensitive matching of the
+                                            `tag_name`.
+
+        Returns:
+            bool: True if two elements are almost equal.
+        """
+        if isinstance(tag_name, self.__class__):
+            return self.isAlmostEqual(
+                tag_name.getTagName(),
+                tag_name.params if tag_name.params else None
+            )
+
+        # search by lambda function
+        if fn and not fn(self):
+            return False
+
+        # compare case sensitive?
+        comparator = self._tagname  # we need to make self._tagname lower
+        if not case_sensitive and tag_name:
+            tag_name = tag_name.lower()
+            comparator = comparator.lower()
+
+        # compare tagname
+        if tag_name and tag_name != comparator:
+            return False
+
+        # None params = don't use parameters to compare equality
+        if params is None:
+            return True
+
+        # compare parameters
+        if params == self.params:
+            return True
+
+        # test whether `params` dict is subset of self.params
+        if not self.containsParamSubset(params):
+            return False
+
+        return True
+
     def find(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
         Same as :meth:`findAll`, but without `endtags`.
