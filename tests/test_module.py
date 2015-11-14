@@ -274,7 +274,6 @@ def test_equality_of_output_with_comment():
     <!-- <link rel="stylesheet" type="text/css" href="style.css"> -->
 </head>
 """
-
     dom = dhtmlparser.parseString(inp)
 
     assert dom.__str__() == inp

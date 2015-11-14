@@ -713,7 +713,10 @@ class HTMLElement(object):
         Returns:
             str: HTML representation.
         """
-        if not self.isTag() or (not self.params and "=" not in self.__element):
+        def is_el_without_params():
+            return not self.params and "=" not in self.__element
+
+        if not self.isTag() or self.isComment() or is_el_without_params():
             return self.__element
 
         output = "<" + str(self.__tagname)
