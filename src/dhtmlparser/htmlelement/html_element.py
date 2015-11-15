@@ -17,6 +17,32 @@ class HTMLElement(HTMLQuery):
     def __repr__(self):
         return "HTMLElement(%s)" % repr(self.__str__())
 
+    def toString(self):
+        """
+        Returns almost original string.
+
+        If you want prettified string, try :meth:`.prettify`.
+
+        Returns:
+            str: Complete representation of the element with childs, endtag \
+                 and so on.
+        """
+        output = ""
+
+        if self.childs or self.isOpeningTag():
+            output += self.tagToString()
+
+            for c in self.childs:
+                output += c.toString()
+
+            if self.endtag is not None:
+                output += self.endtag.tagToString()
+
+        elif not self.isEndTag():
+            output += self.tagToString()
+
+        return output
+
     def getContent(self):
         """
         Returns:
