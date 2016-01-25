@@ -50,7 +50,7 @@ def test_setting_item():
     assert sd["C"] == 1
     assert sd["c"] == 1
 
-    sd["a"] = 1
+    sd["A"] = 1
     assert sd["a"] == 1
     assert sd["A"] == 1
 
