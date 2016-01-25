@@ -19,7 +19,7 @@ def _lower_if_str(item):
         obj: ``item.lower()`` if `item` is ``str`` or ``unicode``, else just \
              `item` itself.
     """
-    if type(item) in [str, unicode]:
+    if isinstance(item, basestring):
         return item.lower()
 
     return item
@@ -32,7 +32,7 @@ class SpecialDict(OrderedDict):
     """
     def __contains__(self, key):
         keys = super(SpecialDict, self).keys()
-        return _lower_if_str(key) in set(map(lambda x: _lower_if_str(x), keys))
+        return _lower_if_str(key) in {_lower_if_str(key) for key in keys}
 
     def __getitem__(self, key):
         key = _lower_if_str(key)
