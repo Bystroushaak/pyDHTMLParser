@@ -31,95 +31,85 @@ class SpecialDict(OrderedDict):
     INsensitive.
     """
     def __init__(self, *args, **kwargs):
+        # lower_key -> key mapping
         self._case = OrderedDict()
+
         super(SpecialDict, self).__init__(*args, **kwargs)
 
     def __setitem__(self, key, value):
         lower_key = _lower_if_str(key)
+
+        # remove the old key with (possibly) different case
+        if lower_key in self._case:
+            original_key = self._case[lower_key]
+            super(SpecialDict, self).__delitem__(original_key)
+
         self._case[lower_key] = key
 
-        super(SpecialDict, self).__setitem__(lower_key, value)
+        super(SpecialDict, self).__setitem__(key, value)
 
     def __getitem__(self, key):
-        return super(SpecialDict, self).__getitem__(_lower_if_str(key))
+        lower_key = _lower_if_str(key)
+
+        if lower_key not in self._case:
+            raise KeyError(repr(key))
+
+        return super(SpecialDict, self).__getitem__(self._case[lower_key])
 
     def __delitem__(self, key):
         lower_key = _lower_if_str(key)
+        key = self._case[lower_key]
 
-        # in case of popitem() this is not true, because it is poped before
-        if lower_key in self._case:
-            del self._case[lower_key]
+        del self._case[lower_key]
 
-        return super(SpecialDict, self).__delitem__(lower_key)
+        return super(SpecialDict, self).__delitem__(key)
 
     def clear(self):
         self._case.clear()
         return super(SpecialDict, self).clear()
 
-    def keys(self):
-        return self._case.values()
-
-    def iterkeys(self):
-        return self._case.itervalues()
-
-    def items(self):
-        return zip(self.iterkeys(), self.itervalues())
-
-    def iteritems(self):
-        value_iterator = iter(self.itervalues())
-
-        for key in self._case.itervalues():
-            yield key, next(value_iterator)
-
     def get(self, k, d=None):
-        return super(SpecialDict, self).get(_lower_if_str(k), d)
+        lower_key = _lower_if_str(k)
+        if lower_key not in self._case:
+            return d
 
-    def popitem(self, ):
-        lower_key, key = self._case.popitem()
-        return key, self.pop(lower_key)
-
-    def __iter__(self):
-        return self._case.itervalues()
+        return super(SpecialDict, self).get(self._case[lower_key], d)
 
     def __contains__(self, key):
-        return super(SpecialDict, self).__contains__(_lower_if_str(key))
+        lower_key = _lower_if_str(key)
+        right_key = self._case.get(lower_key, None)
+
+        return right_key and right_key in set(self.viewkeys())
 
     def has_key(self, key):
         return key in self
 
-    # def __eq__(self, obj):
-    #     if self is obj:
-    #         return True
+    def __eq__(self, obj):
+        if self is obj:
+            return True
 
-    #     if not hasattr(obj, "keys"):
-    #         return False
+        if not hasattr(obj, "__getitem__"):
+            return False
 
-    #     if len(self.keys()) != len(obj.keys()):
-    #         return False
+        keys = None
+        if hasattr(obj, "keys"):
+            keys = obj.keys()
+        elif hasattr(obj, "iterkeys"):
+            keys = list(obj.keys())
+        else:
+            keys = list(obj)
 
-    #     for key in obj.keys():
-    #         if not self.__contains__(key):
-    #             return False
+        if len(self.keys()) != len(keys):
+            return False
 
-    #         if obj[key] != self.__getitem__(key):
-    #             return False
+        for key in keys:
+            if not self.__contains__(key):
+                return False
 
-    #     return True
+            if obj[key] != self.__getitem__(key):
+                return False
 
-    # def __ne__(self, obj):
-    #     return not self.__eq__(obj)
+        return True
 
-    # def __getattribute__(self, name):
-    #     attr = object.__getattribute__(self, name)
-    #     print name
-    #     if hasattr(attr, '__call__'):
-    #         print "%s has __call__" % name
-    #         def newfunc(*args, **kwargs):
-    #             print('before calling %s' %attr.__name__)
-    #             result = attr(*args, **kwargs)
-    #             print('done calling %s' %attr.__name__)
-    #             return result
-    #         return newfunc
-    #     else:
-    #         print "attr", name, attr
-    #         return attr
+    def __ne__(self, obj):
+        return not self.__eq__(obj)
