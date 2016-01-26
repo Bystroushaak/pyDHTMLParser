@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.1.6
+-----
+    - Added more tests.
+    - Fixed #22; bug in the SpecialDict.
+
 2.1.5
 -----
     - License changed to MIT.
