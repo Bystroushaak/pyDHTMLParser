@@ -247,7 +247,7 @@ def parseString(txt, cip=True):
         return txt
 
     # remove UTF BOM (prettify fails if not)
-    if len(txt) > 3 and txt.startswith("\xef\xbb\xbf"):
+    if len(txt) > 3 and txt[:3] == u"\xef\xbb\xbf":
         txt = txt[3:]
 
     if not cip:
@@ -307,7 +307,7 @@ def removeTags(dom):
         el = element_stack.pop(0)
 
         if not (el.isTag() or el.isComment() or not el.getTagName()):
-            output += str(el)
+            output += el.__str__()
 
         if el.childs:
             element_stack = el.childs + element_stack

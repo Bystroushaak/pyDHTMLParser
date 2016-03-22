@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1.7
+-----
+    - Fixed some nasty unicode problems.
+
 2.1.6
 -----
     - Added more tests.
