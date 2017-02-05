@@ -1,3 +1,18 @@
+
+.. image:: https://badge.fury.io/py/pythmltparser.png
+    :target: https://pypi.python.org/pypi/pythmltparser
+
+.. image:: https://img.shields.io/pypi/dm/pythmltparser.svg
+    :target: https://pypi.python.org/pypi/pythmltparser
+
+.. image:: https://readthedocs.org/projects/pydhtmlpaser/badge/?version=latest
+    :target: http://pydhtmlpaser.readthedocs.org/
+
+.. image:: https://img.shields.io/pypi/l/pydhtmlpaser.svg
+
+.. image:: https://img.shields.io/github/issues/Bystroushaak/pydhtmlpaser.svg
+    :target: https://github.com/Bystroushaak/pydhtmlpaser/issues
+
 What is it?
 ===========
 DHTMLParser is a lightweight HTML/XML parser created for one purpose - quick and easy 
