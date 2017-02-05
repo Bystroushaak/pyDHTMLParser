@@ -5,13 +5,13 @@
 .. image:: https://img.shields.io/pypi/dm/pythmltparser.svg
     :target: https://pypi.python.org/pypi/pythmltparser
 
-.. image:: https://readthedocs.org/projects/pydhtmlpaser/badge/?version=latest
-    :target: http://pydhtmlpaser.readthedocs.org/
+.. image:: https://readthedocs.org/projects/pydhtmlparser/badge/?version=latest
+    :target: http://pydhtmlparser.readthedocs.org/
 
-.. image:: https://img.shields.io/pypi/l/pydhtmlpaser.svg
+.. image:: https://img.shields.io/pypi/l/pydhtmlparser.svg
 
-.. image:: https://img.shields.io/github/issues/Bystroushaak/pydhtmlpaser.svg
-    :target: https://github.com/Bystroushaak/pydhtmlpaser/issues
+.. image:: https://img.shields.io/github/issues/Bystroushaak/pydhtmlparser.svg
+    :target: https://github.com/Bystroushaak/pydhtmlparser/issues
 
 What is it?
 ===========
