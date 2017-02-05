@@ -8,10 +8,10 @@
 .. image:: https://readthedocs.org/projects/pyDHTMLParser/badge/?version=latest
     :target: http://pyDHTMLParser.readthedocs.org/
 
-.. image:: https://img.shields.io/pypi/l/pyDHTMLParser.svg
-
 .. image:: https://img.shields.io/github/issues/Bystroushaak/pyDHTMLParser.svg
     :target: https://github.com/Bystroushaak/pyDHTMLParser/issues
+
+.. image:: https://img.shields.io/pypi/l/pyDHTMLParser.svg
 
 What is it?
 ===========
