@@ -1,17 +1,17 @@
 
-.. image:: https://badge.fury.io/py/pythmltparser.png
-    :target: https://pypi.python.org/pypi/pythmltparser
+.. image:: https://badge.fury.io/py/pyDHTMLParser.png
+    :target: https://pypi.python.org/pypi/pyDHTMLParser
 
-.. image:: https://img.shields.io/pypi/dm/pythmltparser.svg
-    :target: https://pypi.python.org/pypi/pythmltparser
+.. image:: https://img.shields.io/pypi/dm/pyDHTMLParser.svg
+    :target: https://pypi.python.org/pypi/pyDHTMLParser
 
-.. image:: https://readthedocs.org/projects/pydhtmlparser/badge/?version=latest
-    :target: http://pydhtmlparser.readthedocs.org/
+.. image:: https://readthedocs.org/projects/pyDHTMLParser/badge/?version=latest
+    :target: http://pyDHTMLParser.readthedocs.org/
 
-.. image:: https://img.shields.io/pypi/l/pydhtmlparser.svg
+.. image:: https://img.shields.io/pypi/l/pyDHTMLParser.svg
 
-.. image:: https://img.shields.io/github/issues/Bystroushaak/pydhtmlparser.svg
-    :target: https://github.com/Bystroushaak/pydhtmlparser/issues
+.. image:: https://img.shields.io/github/issues/Bystroushaak/pyDHTMLParser.svg
+    :target: https://github.com/Bystroushaak/pyDHTMLParser/issues
 
 What is it?
 ===========
@@ -25,4 +25,4 @@ If you want, you can also create HTML/XML documents more easily than by joining 
 Documentation
 =============
 
-Full module documentation can be found here: http://pydhtmlparser.rtfd.org
+Full module documentation can be found here: http://pyDHTMLParser.rtfd.org
