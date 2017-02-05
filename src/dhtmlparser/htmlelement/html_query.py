@@ -4,11 +4,11 @@
 # Interpreter version: python 2.7
 #
 # Imports =====================================================================
-from html_parser import HTMLParser
+from .html_parser import HTMLParser
 
-from html_parser import _is_str
-from html_parser import _is_dict
-from html_parser import _is_iterable
+from .html_parser import _is_str
+from .html_parser import _is_dict
+from .html_parser import _is_iterable
 
 
 # Variables ===================================================================
@@ -92,10 +92,10 @@ class HTMLQuery(HTMLParser):
 
         You can always get them from :attr:`endtag` property.
         """
-        return filter(
-            lambda x: not x.isEndTag(),
-            self.findAll(tag_name, params, fn, case_sensitive)
-        )
+        return [
+            x for x in self.findAll(tag_name, params, fn, case_sensitive)
+            if not x.isEndTag()
+        ]
 
     def findB(self, tag_name, params=None, fn=None, case_sensitive=False):
         """
@@ -103,10 +103,10 @@ class HTMLQuery(HTMLParser):
 
         You can always get them from :attr:`endtag` property.
         """
-        return filter(
-            lambda x: not x.isEndTag(),
-            self.findAllB(tag_name, params, fn, case_sensitive)
-        )
+        return [
+            x for x in self.findAllB(tag_name, params, fn, case_sensitive)
+            if not x.isEndTag()
+        ]
 
     def findAll(self, tag_name, params=None, fn=None, case_sensitive=False):
         """

@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.2.0
+-----
+    - Rewritten for compatibility with python3.
+
 2.1.8
 -----
     - Fixed python 2 / 3 problem in docs/__init__.py.

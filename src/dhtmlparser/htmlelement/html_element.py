@@ -4,8 +4,8 @@
 # Interpreter version: python 2.7
 #
 # Imports =====================================================================
-from html_query import HTMLQuery
-from html_parser import _is_iterable
+from .html_query import HTMLQuery
+from .html_parser import _is_iterable
 
 
 # Variables ===================================================================
@@ -170,7 +170,8 @@ class HTMLElement(HTMLQuery):
         """
         # if there are multiple childs, remove them
         if _is_iterable(child):
-            map(lambda x: self.removeChild(x, end_tag_too), child)
+            for x in child:
+                self.removeChild(child=x, end_tag_too=end_tag_too)
             return
 
         if not self.childs:

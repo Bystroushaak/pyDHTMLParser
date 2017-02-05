@@ -3,11 +3,11 @@
 # Imports =====================================================================
 import gc
 
-import specialdict
-import htmlelement
+from . import specialdict
+from . import htmlelement
 
-from htmlelement import HTMLElement
-from htmlelement import _rotate_buff
+from .htmlelement import HTMLElement
+from .htmlelement import _rotate_buff
 
 
 # Functions ===================================================================
@@ -290,13 +290,19 @@ def removeTags(dom):
     Returns:
         str: Plain string without tags.
     """
+    # python 2 / 3 shill
+    try:
+        string_type = basestring
+    except NameError:
+        string_type = str
+
     # initialize stack with proper value (based on dom parameter)
     element_stack = None
     if type(dom) in [list, tuple]:
         element_stack = dom
     elif isinstance(dom, HTMLElement):
         element_stack = dom.childs if dom.isTag() else [dom]
-    elif isinstance(dom, basestring):
+    elif isinstance(dom, string_type):
         element_stack = parseString(dom).childs
     else:
         element_stack = dom
