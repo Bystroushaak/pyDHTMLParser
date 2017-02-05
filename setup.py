@@ -29,7 +29,7 @@ setup(
 
     url='https://github.com/Bystroushaak/pyDHTMLParser',
     license='MIT',
-    description='Python HTML/XML parser for simple web scraping.',
+    description='Python HTML/XML parser for easy web scraping.',
 
     long_description=LONG_DESCRIPTION,
 
@@ -42,6 +42,7 @@ setup(
 
         "Programming Language :: Python",
         "Programming Language :: Python :: 2.7",
+        "Programming Language :: Python :: 3",
 
         "Topic :: Software Development :: Libraries",
         "Topic :: Software Development :: Libraries :: Python Modules",
