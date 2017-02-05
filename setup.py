@@ -7,7 +7,7 @@
 from setuptools import setup
 from setuptools import find_packages
 
-from docs import getVersion
+from docs import get_version
 
 
 # Variables ===================================================================
@@ -21,7 +21,7 @@ LONG_DESCRIPTION = "\n\n".join([
 # Actual setup definition =====================================================
 setup(
     name='pyDHTMLParser',
-    version=getVersion(CHANGELOG),
+    version=get_version(CHANGELOG),
     py_modules=['dhtmlparser'],
 
     author='Bystroushaak',

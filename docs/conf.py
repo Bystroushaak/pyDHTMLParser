@@ -44,8 +44,8 @@ copyright = u'Bystroushaak'
 try:
     # read data from CHANGES.rst
     sys.path.insert(0, os.path.abspath('../'))
-    from docs import getVersion
-    release = getVersion(open("../CHANGES.rst").read())
+    from docs import get_version
+    release = get_version(open("../CHANGES.rst").read())
 except:
     # this is here specially for readthedocs, which downloads only docs, not
     # other files
