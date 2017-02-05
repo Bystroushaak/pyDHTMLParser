@@ -48,25 +48,25 @@ def _closeElements(childs, HTMLElement):
     Returns:
         list: List of closed elements.
     """
-    o = []
+    out = []
 
     # close all unclosed pair tags
     for e in childs:
         if not e.isTag():
-            o.append(e)
+            out.append(e)
             continue
 
         if not e.isNonPairTag() and not e.isEndTag() and not e.isComment() \
            and e.endtag is None:
             e.childs = _closeElements(e.childs, HTMLElement)
 
-            o.append(e)
-            o.append(HTMLElement("</" + e.getTagName() + ">"))
+            out.append(e)
+            out.append(HTMLElement("</" + e.getTagName() + ">"))
 
             # join opener and endtag
-            e.endtag = o[-1]
-            o[-1].openertag = e
+            e.endtag = out[-1]
+            out[-1].openertag = e
         else:
-            o.append(e)
+            out.append(e)
 
-    return o
+    return out
