@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.1.8
+-----
+    - Fixed python 2 / 3 problem in docs/__init__.py.
+
 2.1.7
 -----
     - Fixed some nasty unicode problems.
