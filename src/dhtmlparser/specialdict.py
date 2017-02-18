@@ -39,7 +39,7 @@ class SpecialDict(OrderedDict):
     def __init__(self, *args, **kwargs):
         # lower_key -> key mapping
         self._case = OrderedDict()
-        self._super = super(self.__class__, self)
+        self._super = super(SpecialDict, self)
 
         self._super.__init__(*args, **kwargs)
 
