@@ -39,9 +39,11 @@ class SpecialDict(OrderedDict):
     def __init__(self, *args, **kwargs):
         # lower_key -> key mapping
         self._case = OrderedDict()
-        self._super = super(SpecialDict, self)
-
         self._super.__init__(*args, **kwargs)
+
+    @property
+    def _super(self):
+        return super(SpecialDict, self)
 
     def __setitem__(self, key, value):
         lower_key = _lower_if_str(key)

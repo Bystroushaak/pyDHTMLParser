@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.2.1
+2.2.2
 -----
     - Attempt to fix strange recursive inheritance problem.
 
