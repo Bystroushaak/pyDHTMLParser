@@ -1,0 +1,6 @@
+HTMLParser class API
+---------------------
+
+.. automodule:: dhtmlparser.parser
+    :members:
+    :undoc-members:
