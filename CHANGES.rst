@@ -1,6 +1,10 @@
 Changelog
 =========
 
+2.2.3
+-----
+    - 2020-04-12 Fix by #25 (thx https://github.com/fm4d).
+
 2.2.2
 -----
     - Attempt to fix strange recursive inheritance problem.
