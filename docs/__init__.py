@@ -14,5 +14,5 @@ def get_version(data):
         if (len(line) == len(underline) and
             all_same(underline) and
             has_digit(line) and
-            "." in line),
+            "." in line)
     )[0]
